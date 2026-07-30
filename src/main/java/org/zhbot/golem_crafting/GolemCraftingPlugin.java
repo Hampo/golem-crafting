@@ -5,6 +5,7 @@ import javax.inject.Inject;
 
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.InventoryID;
@@ -27,6 +28,9 @@ import java.util.regex.Pattern;
 )
 public class GolemCraftingPlugin extends Plugin
 {
+	private static final WorldPoint CENTER = new WorldPoint(2590, 2250, 0);
+	private static final int MAX_DISTANCE = 40;
+
 	private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");
 	private static final Set<Integer> LARGE_FUR_POUCH_IDS = Set.of(
 			ItemID.HG_FURPOUCH_LARGE,
@@ -279,5 +283,15 @@ public class GolemCraftingPlugin extends Plugin
 				return true;
 
 		return false;
+	}
+
+	public boolean isWithinGolemArea()
+	{
+		var player = client.getLocalPlayer();
+		if (player == null)
+			return false;
+
+		var playerLocation = player.getWorldLocation();
+		return playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
 	}
 }

@@ -10,8 +10,6 @@ import javax.inject.Inject;
 import java.awt.*;
 
 public class FurPouchOverlay extends WidgetItemOverlay {
-    private static final WorldPoint CENTER = new WorldPoint(2590, 2250, 0);
-    private static final int MAX_DISTANCE = 40;
 
     private final Client client;
     private final GolemCraftingPlugin plugin;
@@ -41,11 +39,7 @@ public class FurPouchOverlay extends WidgetItemOverlay {
         if (bounds == null || bounds.width <= 0 || bounds.height <= 0)
             return;
 
-        var player = client.getLocalPlayer();
-        if (player == null)
-            return;
-        var playerLocation = player.getWorldLocation();
-        if (playerLocation.distanceTo(CENTER) > MAX_DISTANCE)
+        if (!plugin.isWithinGolemArea())
             return;
 
         Color color;
