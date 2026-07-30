@@ -317,6 +317,6 @@ public class GolemCraftingPlugin extends Plugin
 			return false;
 
 		var playerLocation = player.getWorldLocation();
-		return true || playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
+		return playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
 	}
 }
