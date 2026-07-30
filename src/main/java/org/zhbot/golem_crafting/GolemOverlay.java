@@ -112,8 +112,8 @@ public class GolemOverlay extends Overlay {
             return null;
 
         if (config.showOverlayPlinth())
-            renderObject(graphics, station, onValidTile ? config.overlayPlinthValidColour() : config.overlayPlinthInvalidColour());
-
+            renderObject(graphics, station, onValidTile ? (progress == 5 ? config.overlayPlinthValidCoreColour() : config.overlayPlinthValidColour()) : (progress == 5 ? config.overlayPlinthInvalidCoreColour() : config.overlayPlinthInvalidColour()));
+        
         return null;
     }
 
