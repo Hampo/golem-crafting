@@ -7,11 +7,14 @@ import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.OverlayUtil;
+import net.runelite.client.ui.overlay.components.ProgressPieComponent;
 
 import javax.inject.Inject;
 import java.awt.*;
 
 public class SouthGolemOverlay extends Overlay {
+    private static final int RESPAWN_DELAY = 10;
+
     private final Client client;
     private final GolemCraftingPlugin plugin;
     //private final GolemCraftingConfig config;
@@ -108,22 +111,33 @@ public class SouthGolemOverlay extends Overlay {
         if (localPoint == null)
             return;
 
-        var player = client.getLocalPlayer();
-        var playerLocation = player.getWorldLocation();
-        var color = (playerLocation.getX() == worldPoint.getX() && playerLocation.getY() == worldPoint.getY()) ? new Color(0, 255, 0, 75) : new Color(255, 0, 0, 75);
-        if (plugin.getSouthGolemProgress() == 0 && (client.getTickCount() - plugin.getSouthGolemProgressTick()) < 10)
-            color = new Color(255, 127, 0, 75);
-
         var tilePoly = Perspective.getCanvasTilePoly(client, localPoint);
         OverlayUtil.renderPolygon(graphics, tilePoly, Color.GREEN);
-        renderObject(graphics, gameObject, color);
+
+        if (gameObject != null)
+        {
+            var ticksSinceProgress = client.getTickCount() - plugin.getSouthGolemProgressTick();
+            if (plugin.getSouthGolemProgress() == 0 && ticksSinceProgress < RESPAWN_DELAY)
+            {
+                ProgressPieComponent pie = new ProgressPieComponent();
+                pie.setPosition(gameObject.getCanvasLocation(0));
+                pie.setProgress((float)ticksSinceProgress / RESPAWN_DELAY);
+                pie.setBorderColor(Color.ORANGE.darker());
+                pie.setFill(Color.ORANGE);
+                pie.render(graphics);
+            }
+            else
+            {
+                var player = client.getLocalPlayer();
+                var playerLocation = player.getWorldLocation();
+                var color = (playerLocation.getX() == worldPoint.getX() && playerLocation.getY() == worldPoint.getY()) ? new Color(0, 255, 0, 75) : new Color(255, 0, 0, 75);
+                renderObject(graphics, gameObject, color);
+            }
+        }
     }
 
     private void renderObject(Graphics2D graphics, GameObject gameObject, Color color)
     {
-        if (gameObject == null)
-            return;
-
         var clickbox = gameObject.getClickbox();
         var mousePosition = client.getMouseCanvasPosition();
 
