@@ -82,7 +82,7 @@ public class GolemCraftingPlugin extends Plugin
 			case SOUTH_GOLEM_PROGRESS_ID:
 				southGolemProgress = event.getValue();
 				southGolemProgressTick = client.getTickCount();
-				if (event.getValue() > 0)
+				if (event.getValue() > 1)
 					notifier.notify(config.notification(), "Golem stage complete");
 				break;
 			case SOUTH_GOLEM_NORTH_STATE_ID:
