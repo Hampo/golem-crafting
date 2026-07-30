@@ -16,6 +16,6 @@ public class NorthGolem extends Golem {
 
     public NorthGolem()
     {
-        super(STATION_ID, PROGRESS_ID, NORTH_STATE_ID, EAST_STATE_ID, SOUTH_STATE_ID, WEST_STATE_ID, GOLEM_TILE, FINAL_TILE);
+        super("North Golem", STATION_ID, PROGRESS_ID, NORTH_STATE_ID, EAST_STATE_ID, SOUTH_STATE_ID, WEST_STATE_ID, GOLEM_TILE, FINAL_TILE);
     }
 }

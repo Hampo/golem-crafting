@@ -3,6 +3,7 @@ package org.zhbot.golem_crafting;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
@@ -14,11 +15,13 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -70,7 +73,11 @@ public class GolemCraftingPlugin extends Plugin
 	@Inject
 	private FurPouchOverlay furPouchOverlay;
 
-	private final Set<Golem> golems = Set.of(new SouthGolem(), new NorthGolem());
+	@Inject
+	private GolemCraftingInfobox infobox;
+
+	@Getter
+	private final List<Golem> golems = List.of(new NorthGolem(), new SouthGolem());
 	private final Set<GolemOverlay> golemOverlays = new HashSet<>();
 
 	private static final String FUR_POUCH_KEY = "furPouchCount";
@@ -102,6 +109,8 @@ public class GolemCraftingPlugin extends Plugin
 			golemOverlays.add(overlay);
 		}
 		overlayManager.add(furPouchOverlay);
+
+		updateConfig();
 	}
 
 	@Override
@@ -110,6 +119,22 @@ public class GolemCraftingPlugin extends Plugin
 		for (var golemOverlay : golemOverlays)
 			overlayManager.remove(golemOverlay);
 		overlayManager.remove(furPouchOverlay);
+		overlayManager.remove(infobox);
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (event.getGroup().equals(GolemCraftingConfig.group))
+			updateConfig();
+	}
+
+	private void updateConfig()
+	{
+		if (config.showInfobox())
+			overlayManager.add(infobox);
+		else
+			overlayManager.remove(infobox);
 	}
 
 	@Subscribe

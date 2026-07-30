@@ -13,6 +13,9 @@ public abstract class Golem {
     public static final int RESPAWN_DELAY = 10;
 
     @Getter
+    private String name;
+
+    @Getter
     private final int progressID;
     @Getter
     @Setter
@@ -38,8 +41,9 @@ public abstract class Golem {
 
     private final CardinalDirection finalTile;
 
-    public Golem(int stationID, int progressID, int northStateID, int eastStateID, int southStateID, int westStateID, WorldPoint golemTile, CardinalDirection finalTile)
+    public Golem(String name, int stationID, int progressID, int northStateID, int eastStateID, int southStateID, int westStateID, WorldPoint golemTile, CardinalDirection finalTile)
     {
+        this.name = name;
         this.stationID = stationID;
         this.progressID = progressID;
         this.northStateID = northStateID;
