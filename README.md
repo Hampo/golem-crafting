@@ -1,2 +1,2 @@
-# Example
-An example greeter plugin
+# Golem Crafting
+A plugin to help with Wyrmscraig Golem Crafting.
