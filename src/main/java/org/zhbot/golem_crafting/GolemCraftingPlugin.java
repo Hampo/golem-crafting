@@ -74,6 +74,9 @@ public class GolemCraftingPlugin extends Plugin
 	private FurPouchOverlay furPouchOverlay;
 
 	@Inject
+	private SunstoneOverlay sunstoneOverlay;
+
+	@Inject
 	private GolemCraftingInfobox infobox;
 
 	@Getter
@@ -109,6 +112,7 @@ public class GolemCraftingPlugin extends Plugin
 			golemOverlays.add(overlay);
 		}
 		overlayManager.add(furPouchOverlay);
+		overlayManager.add(sunstoneOverlay);
 
 		updateConfig();
 	}
@@ -119,6 +123,7 @@ public class GolemCraftingPlugin extends Plugin
 		for (var golemOverlay : golemOverlays)
 			overlayManager.remove(golemOverlay);
 		overlayManager.remove(furPouchOverlay);
+		overlayManager.remove(sunstoneOverlay);
 		overlayManager.remove(infobox);
 	}
 

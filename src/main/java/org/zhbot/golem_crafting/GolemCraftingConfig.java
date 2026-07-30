@@ -87,11 +87,23 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "infoboxSunStone",
+			name = "Show sunstone",
+			description = "Show sunstone count",
+			section = infoboxSection,
+			position = 4
+	)
+	default boolean showInfoboxSunStone()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "infoboxFurPouchUnknownTextColour",
 			name = "Fur Pouch Unknown Text Colour",
 			description = "The text colour for when the fur pouch contents are unknown",
 			section = infoboxSection,
-			position = 4
+			position = 5
 	)
 	default Color infoboxFurPouchUnknownTextColour()
 	{
@@ -103,7 +115,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Low Text Colour",
 			description = "The text colour for when the fur pouch contents are low",
 			section = infoboxSection,
-			position = 5
+			position = 6
 	)
 	default Color infoboxFurPouchLowTextColour()
 	{
@@ -115,7 +127,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Empty Text Colour",
 			description = "The text colour for when the fur pouch is empty",
 			section = infoboxSection,
-			position = 6
+			position = 7
 	)
 	default Color infoboxFurPouchEmptyTextColour()
 	{
@@ -324,5 +336,30 @@ public interface GolemCraftingConfig extends Config
 	default Color overlayFurPouchEmptyTextColour()
 	{
 		return new Color(255, 0, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlaySunstoneMode",
+			name = "Highlight Sunstones",
+			description = "Highlight sunstones when inventory is empty",
+			section = overlaysSection,
+			position = 16
+	)
+	default SunstoneMode overlaySunstoneMode()
+	{
+		return SunstoneMode.ROCKS;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "overlaySunstoneColour",
+			name = "Sunstone Colour",
+			description = "The highlight colour for sunstones",
+			section = overlaysSection,
+			position = 17
+	)
+	default Color overlaySunstoneColour()
+	{
+		return new Color(0, 255, 0, 75);
 	}
 }

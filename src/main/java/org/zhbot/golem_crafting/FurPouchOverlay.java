@@ -1,8 +1,6 @@
 package org.zhbot.golem_crafting;
 
 import net.runelite.api.Client;
-import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.gameval.ItemID;
 import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.ui.overlay.*;
 
@@ -10,7 +8,6 @@ import javax.inject.Inject;
 import java.awt.*;
 
 public class FurPouchOverlay extends WidgetItemOverlay {
-
     private final Client client;
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
