@@ -3,8 +3,10 @@ package org.zhbot.golem_crafting;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.InventoryID;
@@ -13,11 +15,13 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
+import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -27,7 +31,14 @@ import java.util.regex.Pattern;
 )
 public class GolemCraftingPlugin extends Plugin
 {
+	private static final WorldPoint CENTER = new WorldPoint(2590, 2250, 0);
+	private static final int MAX_DISTANCE = 40;
+
 	private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");
+	public static final Set<Integer> LARGE_FUR_POUCH_IDS = Set.of(
+			ItemID.HG_FURPOUCH_LARGE,
+			ItemID.HG_FURPOUCH_LARGE_OPEN
+	);
 	private static final Set<Integer> FUR_ITEM_IDS = Set.of(
 			ItemID.HUNTINGBEAST_POLAR_FUR,
 			ItemID.HUNTINGBEAST_WOODLAND_FUR,
@@ -62,7 +73,14 @@ public class GolemCraftingPlugin extends Plugin
 	@Inject
 	private FurPouchOverlay furPouchOverlay;
 
-	private final Set<Golem> golems = Set.of(new SouthGolem(), new NorthGolem());
+	@Inject
+	private SunstoneOverlay sunstoneOverlay;
+
+	@Inject
+	private GolemCraftingInfobox infobox;
+
+	@Getter
+	private final List<Golem> golems = List.of(new NorthGolem(), new SouthGolem());
 	private final Set<GolemOverlay> golemOverlays = new HashSet<>();
 
 	private static final String FUR_POUCH_KEY = "furPouchCount";
@@ -89,11 +107,14 @@ public class GolemCraftingPlugin extends Plugin
 	{
 		for (var golem : golems)
 		{
-			var overlay = new GolemOverlay(client, this, golem);
+			var overlay = new GolemOverlay(client, this, config, golem);
 			overlayManager.add(overlay);
 			golemOverlays.add(overlay);
 		}
 		overlayManager.add(furPouchOverlay);
+		overlayManager.add(sunstoneOverlay);
+
+		updateConfig();
 	}
 
 	@Override
@@ -102,6 +123,23 @@ public class GolemCraftingPlugin extends Plugin
 		for (var golemOverlay : golemOverlays)
 			overlayManager.remove(golemOverlay);
 		overlayManager.remove(furPouchOverlay);
+		overlayManager.remove(sunstoneOverlay);
+		overlayManager.remove(infobox);
+	}
+
+	@Subscribe
+	public void onConfigChanged(ConfigChanged event)
+	{
+		if (event.getGroup().equals(GolemCraftingConfig.group))
+			updateConfig();
+	}
+
+	private void updateConfig()
+	{
+		if (config.showInfobox())
+			overlayManager.add(infobox);
+		else
+			overlayManager.remove(infobox);
 	}
 
 	@Subscribe
@@ -148,8 +186,35 @@ public class GolemCraftingPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
+		if (event.getMenuAction() == MenuAction.WIDGET_TARGET_ON_WIDGET)
+		{
+			var selectedWidget = client.getSelectedWidget();
+			if (selectedWidget == null)
+				return;
+
+			var sourceItemId = selectedWidget.getItemId();
+			var targetItemId = event.getItemId();
+
+			var furId = -1;
+			if (LARGE_FUR_POUCH_IDS.contains(sourceItemId) && FUR_ITEM_IDS.contains(targetItemId))
+				furId = targetItemId;
+			else if (FUR_ITEM_IDS.contains(sourceItemId) && LARGE_FUR_POUCH_IDS.contains(targetItemId))
+				furId = sourceItemId;
+			else
+				return;
+
+			ItemContainer inventory = client.getItemContainer(InventoryID.INV);
+			if (inventory == null)
+				return;
+
+			var furCount = inventory.count(furId);
+			setFurPouchCount(Math.min(28, getFurPouchCount() + furCount));
+
+			return;
+		}
+
 		var itemId = event.getItemId();
-		if (itemId != ItemID.HG_FURPOUCH_LARGE && itemId != ItemID.HG_FURPOUCH_LARGE_OPEN)
+		if (!LARGE_FUR_POUCH_IDS.contains(itemId))
 			return;
 
 		ItemContainer inventory = client.getItemContainer(InventoryID.INV);
@@ -179,8 +244,10 @@ public class GolemCraftingPlugin extends Plugin
 						freeSpots++;
 
 				setFurPouchCount(Math.max(0, getFurPouchCount() - freeSpots));
+				break;
 			case "Empty-to-bank": // Item Charges Improved
 				setFurPouchCount(0);
+				break;
 		}
 	}
 
@@ -227,7 +294,11 @@ public class GolemCraftingPlugin extends Plugin
 		if (inventory == null)
 			return false;
 
-		return inventory.contains(ItemID.HG_FURPOUCH_LARGE) || inventory.contains(ItemID.HG_FURPOUCH_LARGE_OPEN);
+		for (var furPouchId : LARGE_FUR_POUCH_IDS)
+			if (inventory.contains(furPouchId))
+				return true;
+
+		return false;
 	}
 
 	public boolean isBankOpen()
@@ -244,5 +315,15 @@ public class GolemCraftingPlugin extends Plugin
 				return true;
 
 		return false;
+	}
+
+	public boolean isWithinGolemArea()
+	{
+		var player = client.getLocalPlayer();
+		if (player == null)
+			return false;
+
+		var playerLocation = player.getWorldLocation();
+		return playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
 	}
 }

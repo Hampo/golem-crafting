@@ -1,8 +1,6 @@
 package org.zhbot.golem_crafting;
 
 import net.runelite.api.Client;
-import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.gameval.ItemID;
 import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.ui.overlay.*;
 
@@ -10,19 +8,16 @@ import javax.inject.Inject;
 import java.awt.*;
 
 public class FurPouchOverlay extends WidgetItemOverlay {
-    private static final WorldPoint CENTER = new WorldPoint(2590, 2250, 0);
-    private static final int MAX_DISTANCE = 40;
-
     private final Client client;
     private final GolemCraftingPlugin plugin;
-    //private final GolemCraftingConfig config;
+    private final GolemCraftingConfig config;
 
     @Inject
-    private FurPouchOverlay(Client client, GolemCraftingPlugin plugin/*, GolemCraftingConfig config*/)
+    private FurPouchOverlay(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config)
     {
         this.client = client;
         this.plugin = plugin;
-        //this.config = config;
+        this.config = config;
 
         showOnInventory();
         setPriority(2f);
@@ -30,31 +25,52 @@ public class FurPouchOverlay extends WidgetItemOverlay {
 
     @Override
     public void renderItemOverlay(Graphics2D graphics, int itemId, WidgetItem widgetItem) {
-        if (itemId != ItemID.HG_FURPOUCH_LARGE && itemId != ItemID.HG_FURPOUCH_LARGE_OPEN)
-            return;
-
-        var furPouchCount = plugin.getFurPouchCount();
-        if (furPouchCount > 5)
+        if (!GolemCraftingPlugin.LARGE_FUR_POUCH_IDS.contains((itemId)))
             return;
 
         var bounds = widgetItem.getCanvasBounds();
         if (bounds == null || bounds.width <= 0 || bounds.height <= 0)
             return;
 
-        var player = client.getLocalPlayer();
-        if (player == null)
+        if (!plugin.isWithinGolemArea())
             return;
-        var playerLocation = player.getWorldLocation();
-        if (playerLocation.distanceTo(CENTER) > MAX_DISTANCE)
+
+        var furPouchCount = plugin.getFurPouchCount();
+
+        renderBox(graphics, bounds, furPouchCount);
+
+        if (!config.showOverlayFurPouchCount())
+            return;
+
+        String text = (furPouchCount == -1) ? "?" : String.valueOf(furPouchCount);
+        graphics.setFont(net.runelite.client.ui.FontManager.getRunescapeSmallFont());
+
+        Color color;
+        if (furPouchCount == 0)
+            color = config.overlayFurPouchEmptyTextColour();
+        else if (furPouchCount == -1)
+            color = config.overlayFurPouchUnknownTextColour();
+        else if (furPouchCount <= config.furPouchLowThreshold())
+            color = config.overlayFurPouchLowTextColour();
+        else
+            color = config.overlayFurPouchTextColour();
+        graphics.setColor(color);
+
+        graphics.drawString(text, bounds.x + 2, bounds.y + 12);
+    }
+
+    private void renderBox(Graphics2D graphics, Rectangle bounds, int furPouchCount)
+    {
+        if (furPouchCount > config.furPouchLowThreshold())
             return;
 
         Color color;
         if (furPouchCount == 0)
-            color = Color.RED;
+            color = config.overlayFurPouchEmptyColour();
         else if (furPouchCount == -1)
-            color = Color.YELLOW;
+            color = config.overlayFurPouchUnknownColour();
         else
-            color = new Color(204, 102, 0);
+            color = config.overlayFurPouchLowColour();
 
         graphics.setColor(color);
         graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
