@@ -40,11 +40,23 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "infoboxTotal",
+			name = "Show total golems",
+			description = "Shows the total number of golems crafted",
+			section = infoboxSection,
+			position = 1
+	)
+	default boolean showInfoboxTotal()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "infoboxState",
 			name = "Show state",
 			description = "Show current state of crafting",
 			section = infoboxSection,
-			position = 1
+			position = 2
 	)
 	default boolean showInfoboxState()
 	{
@@ -56,7 +68,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Show fur pouch",
 			description = "Show fur pouch count",
 			section = infoboxSection,
-			position = 2
+			position = 3
 	)
 	default boolean showInfoboxFurPouch()
 	{
@@ -146,11 +158,23 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "overlayFurPouchLowThreshold",
+			name = "Fur Pouch Low Threshold",
+			description = "The threshold for fur pouch contents to be deemed low",
+			section = overlaysSection,
+			position = 6
+	)
+	default int overlayFurPouchLowThreshold()
+	{
+		return 5;
+	}
+
+	@ConfigItem(
 			keyName = "overlayFurPouchUnknownColour",
 			name = "Fur Pouch Unknown Colour",
 			description = "The highlight colour for when the fur pouch contents are unknown",
 			section = overlaysSection,
-			position = 6
+			position = 7
 	)
 	default Color overlayFurPouchUnknownColour()
 	{
@@ -162,7 +186,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Low Colour",
 			description = "The highlight colour for when the fur pouch contents are low",
 			section = overlaysSection,
-			position = 7
+			position = 8
 	)
 	default Color overlayFurPouchLowColour()
 	{
@@ -170,20 +194,8 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "overlayFurPouchLowThreshold",
-			name = "Fur Pouch Low Threshold",
-			description = "The threshold for fur pouch contents to be deemed low",
-			section = overlaysSection,
-			position = 8
-	)
-	default int overlayFurPouchLowThreshold()
-	{
-		return 5;
-	}
-
-	@ConfigItem(
 			keyName = "overlayFurPouchEmptyColour",
-			name = "Fur Pouch Low Colour",
+			name = "Fur Pouch Empty Colour",
 			description = "The highlight colour for when the fur pouch is empty",
 			section = overlaysSection,
 			position = 9
@@ -203,5 +215,53 @@ public interface GolemCraftingConfig extends Config
 	default boolean showOverlayFurPouchCount()
 	{
 		return true;
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchTextColour",
+			name = "Fur Pouch Text Colour",
+			description = "The default text colour for the fur pouch",
+			section = overlaysSection,
+			position = 7
+	)
+	default Color overlayFurPouchTextColour()
+	{
+		return new Color(255, 255, 255);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchUnknownTextColour",
+			name = "Fur Pouch Unknown Text Colour",
+			description = "The text colour for when the fur pouch contents are unknown",
+			section = overlaysSection,
+			position = 7
+	)
+	default Color overlayFurPouchUnknownTextColour()
+	{
+		return new Color(255, 255, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchLowTextColour",
+			name = "Fur Pouch Low Text Colour",
+			description = "The text colour for when the fur pouch contents are low",
+			section = overlaysSection,
+			position = 8
+	)
+	default Color overlayFurPouchLowTextColour()
+	{
+		return new Color(255, 121, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchEmptyTextColour",
+			name = "Fur Pouch Empty Text Colour",
+			description = "The text colour for when the fur pouch is empty",
+			section = overlaysSection,
+			position = 9
+	)
+	default Color overlayFurPouchEmptyTextColour()
+	{
+		return new Color(255, 0, 0);
 	}
 }

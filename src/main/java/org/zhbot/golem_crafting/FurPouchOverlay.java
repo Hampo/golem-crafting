@@ -47,9 +47,19 @@ public class FurPouchOverlay extends WidgetItemOverlay {
 
         String text = (furPouchCount == -1) ? "?" : String.valueOf(furPouchCount);
         graphics.setFont(net.runelite.client.ui.FontManager.getRunescapeSmallFont());
-        graphics.setColor(Color.WHITE);
 
-        graphics.drawString(text, bounds.x + 2, bounds.y + 10);
+        Color color;
+        if (furPouchCount == 0)
+            color = config.overlayFurPouchEmptyTextColour();
+        else if (furPouchCount == -1)
+            color = config.overlayFurPouchUnknownTextColour();
+        else if (furPouchCount <= config.overlayFurPouchLowThreshold())
+            color = config.overlayFurPouchLowTextColour();
+        else
+            color = config.overlayFurPouchTextColour();
+        graphics.setColor(color);
+
+        graphics.drawString(text, bounds.x + 2, bounds.y + 12);
     }
 
     private void renderBox(Graphics2D graphics, Rectangle bounds, int furPouchCount)

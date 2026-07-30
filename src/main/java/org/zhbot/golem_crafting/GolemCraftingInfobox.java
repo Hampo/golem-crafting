@@ -9,6 +9,8 @@ import javax.inject.Inject;
 import java.awt.*;
 
 public class GolemCraftingInfobox extends OverlayPanel {
+    private static final int TOTAL_GOLEMS_ID = 15738;
+
     private final Client client;
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
@@ -34,6 +36,14 @@ public class GolemCraftingInfobox extends OverlayPanel {
                 .leftColor(Color.GREEN)
                 .build());
 
+        if (config.showInfoboxTotal())
+        {
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Total Golems:")
+                    .right(String.valueOf(client.getVarbitValue(TOTAL_GOLEMS_ID)))
+                    .build());
+        }
+
         if (config.showInfoboxState())
         {
             for (var golem : plugin.getGolems())
@@ -48,7 +58,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
         if (config.showInfoboxFurPouch())
         {
             panelComponent.getChildren().add(LineComponent.builder()
-                    .left("Fur pouch:")
+                    .left("Fur Pouch:")
                     .right(plugin.hasLargeFurPouch() ? plugin.getFurPouchCount() + "/28" : "N/A")
                     .build());
         }
