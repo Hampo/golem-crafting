@@ -53,7 +53,7 @@ public class FurPouchOverlay extends WidgetItemOverlay {
             color = config.overlayFurPouchEmptyTextColour();
         else if (furPouchCount == -1)
             color = config.overlayFurPouchUnknownTextColour();
-        else if (furPouchCount <= config.overlayFurPouchLowThreshold())
+        else if (furPouchCount <= config.furPouchLowThreshold())
             color = config.overlayFurPouchLowTextColour();
         else
             color = config.overlayFurPouchTextColour();
@@ -64,7 +64,7 @@ public class FurPouchOverlay extends WidgetItemOverlay {
 
     private void renderBox(Graphics2D graphics, Rectangle bounds, int furPouchCount)
     {
-        if (furPouchCount > config.overlayFurPouchLowThreshold())
+        if (furPouchCount > config.furPouchLowThreshold())
             return;
 
         Color color;

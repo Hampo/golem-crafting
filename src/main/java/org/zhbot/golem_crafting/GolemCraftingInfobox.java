@@ -57,9 +57,20 @@ public class GolemCraftingInfobox extends OverlayPanel {
 
         if (config.showInfoboxFurPouch())
         {
+            var furPouchCount = plugin.getFurPouchCount();
+            Color color;
+            if (furPouchCount == 0)
+                color = config.infoboxFurPouchEmptyTextColour();
+            else if (furPouchCount == -1)
+                color = config.infoboxFurPouchUnknownTextColour();
+            else if (furPouchCount <= config.furPouchLowThreshold())
+                color = config.infoboxFurPouchLowTextColour();
+            else
+                color = Color.WHITE;
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Fur Pouch:")
-                    .right(plugin.hasLargeFurPouch() ? plugin.getFurPouchCount() + "/28" : "N/A")
+                    .right(plugin.hasLargeFurPouch() ? furPouchCount + "/28" : "N/A")
+                    .rightColor(color)
                     .build());
         }
 
