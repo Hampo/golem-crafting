@@ -28,6 +28,10 @@ import java.util.regex.Pattern;
 public class GolemCraftingPlugin extends Plugin
 {
 	private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");
+	private static final Set<Integer> LARGE_FUR_POUCH_IDS = Set.of(
+			ItemID.HG_FURPOUCH_LARGE,
+			ItemID.HG_FURPOUCH_LARGE_OPEN
+	);
 	private static final Set<Integer> FUR_ITEM_IDS = Set.of(
 			ItemID.HUNTINGBEAST_POLAR_FUR,
 			ItemID.HUNTINGBEAST_WOODLAND_FUR,
@@ -148,8 +152,35 @@ public class GolemCraftingPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
+		if (event.getMenuAction() == MenuAction.WIDGET_TARGET_ON_WIDGET)
+		{
+			var selectedWidget = client.getSelectedWidget();
+			if (selectedWidget == null)
+				return;
+
+			var sourceItemId = selectedWidget.getItemId();
+			var targetItemId = event.getItemId();
+
+			var furId = -1;
+			if (LARGE_FUR_POUCH_IDS.contains(sourceItemId) && FUR_ITEM_IDS.contains(targetItemId))
+				furId = targetItemId;
+			else if (FUR_ITEM_IDS.contains(sourceItemId) && LARGE_FUR_POUCH_IDS.contains(targetItemId))
+				furId = sourceItemId;
+			else
+				return;
+
+			ItemContainer inventory = client.getItemContainer(InventoryID.INV);
+			if (inventory == null)
+				return;
+
+			var furCount = inventory.count(furId);
+			setFurPouchCount(Math.min(28, getFurPouchCount() + furCount));
+
+			return;
+		}
+
 		var itemId = event.getItemId();
-		if (itemId != ItemID.HG_FURPOUCH_LARGE && itemId != ItemID.HG_FURPOUCH_LARGE_OPEN)
+		if (!LARGE_FUR_POUCH_IDS.contains(itemId))
 			return;
 
 		ItemContainer inventory = client.getItemContainer(InventoryID.INV);
@@ -227,7 +258,11 @@ public class GolemCraftingPlugin extends Plugin
 		if (inventory == null)
 			return false;
 
-		return inventory.contains(ItemID.HG_FURPOUCH_LARGE) || inventory.contains(ItemID.HG_FURPOUCH_LARGE_OPEN);
+		for (var furPouchId : LARGE_FUR_POUCH_IDS)
+			if (inventory.contains(furPouchId))
+				return true;
+
+		return false;
 	}
 
 	public boolean isBankOpen()
