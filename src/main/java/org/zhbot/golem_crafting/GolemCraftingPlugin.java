@@ -3,7 +3,6 @@ package org.zhbot.golem_crafting;
 import com.google.inject.Provides;
 import javax.inject.Inject;
 
-import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.events.*;
@@ -18,6 +17,7 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -27,13 +27,6 @@ import java.util.regex.Pattern;
 )
 public class GolemCraftingPlugin extends Plugin
 {
-	private static final int SOUTH_GOLEM_PROGRESS_ID = 15733;
-	private static final int SOUTH_GOLEM_NORTH_STATE_ID = 15734;
-	private static final int SOUTH_GOLEM_EAST_STATE_ID = 15735;
-	private static final int SOUTH_GOLEM_SOUTH_STATE_ID = 15736;
-	private static final int SOUTH_GOLEM_WEST_STATE_ID = 15737;
-	//private static final int GOLEMS_CRAFTED_TOTAL_ID = 15738;
-
 	private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");
 	private static final Set<Integer> FUR_ITEM_IDS = Set.of(
 			ItemID.HUNTINGBEAST_POLAR_FUR,
@@ -67,28 +60,10 @@ public class GolemCraftingPlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Inject
-	private SouthGolemOverlay southGolemOverlay;
-
-	@Inject
 	private FurPouchOverlay furPouchOverlay;
 
-	@Getter
-	private int southGolemProgress;
-
-	@Getter
-	private int southGolemProgressTick;
-
-	@Getter
-	private boolean southGolemNorthDone;
-
-	@Getter
-	private boolean southGolemEastDone;
-
-	@Getter
-	private boolean southGolemSouthDone;
-
-	@Getter
-	private boolean southGolemWestDone;
+	private final Set<Golem> golems = Set.of(new SouthGolem(), new NorthGolem());
+	private final Set<GolemOverlay> golemOverlays = new HashSet<>();
 
 	private static final String FUR_POUCH_KEY = "furPouchCount";
 	public int getFurPouchCount()
@@ -112,42 +87,37 @@ public class GolemCraftingPlugin extends Plugin
 	@Override
 	protected void startUp() throws Exception
 	{
-		overlayManager.add(southGolemOverlay);
+		for (var golem : golems)
+		{
+			var overlay = new GolemOverlay(client, this, golem);
+			overlayManager.add(overlay);
+			golemOverlays.add(overlay);
+		}
 		overlayManager.add(furPouchOverlay);
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
-		overlayManager.remove(southGolemOverlay);
+		for (var golemOverlay : golemOverlays)
+			overlayManager.remove(golemOverlay);
 		overlayManager.remove(furPouchOverlay);
 	}
 
 	@Subscribe
 	public void onVarbitChanged(VarbitChanged event)
 	{
-		switch (event.getVarbitId())
+		var varbitId = event.getVarbitId();
+		for (var golem : golems)
 		{
-			case SOUTH_GOLEM_PROGRESS_ID:
-				southGolemProgress = event.getValue();
-				southGolemProgressTick = client.getTickCount();
+			if (varbitId == golem.getProgressID())
+			{
+				golem.setLastProgressTick(client.getTickCount());
 				if (event.getValue() > 1)
 					notifier.notify(config.notification(), "Golem stage complete");
 				else if (event.getValue() == 0 && getFurPouchCount() > 0 && hasLargeFurPouch())
 					setFurPouchCount(getFurPouchCount() - 1);
-				break;
-			case SOUTH_GOLEM_NORTH_STATE_ID:
-				southGolemNorthDone = event.getValue() != 0;
-				break;
-			case SOUTH_GOLEM_EAST_STATE_ID:
-				southGolemEastDone = event.getValue() != 0;
-				break;
-			case SOUTH_GOLEM_SOUTH_STATE_ID:
-				southGolemSouthDone = event.getValue() != 0;
-				break;
-			case SOUTH_GOLEM_WEST_STATE_ID:
-				southGolemWestDone = event.getValue() != 0;
-				break;
+			}
 		}
 	}
 
@@ -265,5 +235,14 @@ public class GolemCraftingPlugin extends Plugin
 		Widget bankWidget = client.getWidget(InterfaceID.BANKMAIN);
 
 		return bankWidget != null && !bankWidget.isHidden();
+	}
+
+	public boolean isAnyGolemActive()
+	{
+		for (var golem : golems)
+			if (golem.getProgress(client) > 0)
+				return true;
+
+		return false;
 	}
 }
