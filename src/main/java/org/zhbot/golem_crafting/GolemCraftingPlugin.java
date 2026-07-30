@@ -239,8 +239,10 @@ public class GolemCraftingPlugin extends Plugin
 						freeSpots++;
 
 				setFurPouchCount(Math.max(0, getFurPouchCount() - freeSpots));
+				break;
 			case "Empty-to-bank": // Item Charges Improved
 				setFurPouchCount(0);
+				break;
 		}
 	}
 
