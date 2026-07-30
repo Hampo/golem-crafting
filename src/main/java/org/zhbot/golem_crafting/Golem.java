@@ -11,9 +11,10 @@ import java.awt.*;
 
 public abstract class Golem {
     public static final int RESPAWN_DELAY = 10;
+    private static final int MAX_PROGRESS = 10;
 
     @Getter
-    private String name;
+    private final String name;
 
     @Getter
     private final int progressID;
@@ -25,6 +26,11 @@ public abstract class Golem {
     private final int eastStateID;
     private final int southStateID;
     private final int westStateID;
+
+    private final int northProgressID;
+    private final int eastProgressID;
+    private final int southProgressID;
+    private final int westProgressID;
 
     @Getter
     private final int stationID;
@@ -41,7 +47,7 @@ public abstract class Golem {
 
     private final CardinalDirection finalTile;
 
-    public Golem(String name, int stationID, int progressID, int northStateID, int eastStateID, int southStateID, int westStateID, WorldPoint golemTile, CardinalDirection finalTile)
+    public Golem(String name, int stationID, int progressID, int northStateID, int eastStateID, int southStateID, int westStateID, int northProgressID, int eastProgressID, int southProgressID, int westProgressID, WorldPoint golemTile, CardinalDirection finalTile)
     {
         this.name = name;
         this.stationID = stationID;
@@ -50,6 +56,10 @@ public abstract class Golem {
         this.eastStateID = eastStateID;
         this.southStateID = southStateID;
         this.westStateID = westStateID;
+        this.northProgressID = northProgressID;
+        this.eastProgressID = eastProgressID;
+        this.southProgressID = southProgressID;
+        this.westProgressID = westProgressID;
         this.golemTile = golemTile;
         this.northTile = new WorldPoint(golemTile.getX(), golemTile.getY() + 1, golemTile.getPlane());
         this.eastTile = new WorldPoint(golemTile.getX() + 1, golemTile.getY(), golemTile.getPlane());
@@ -82,6 +92,14 @@ public abstract class Golem {
     {
         return client.getVarbitValue(westStateID) != 0;
     }
+
+    public float getNorthProgress(final Client client) { return (float)client.getVarbitValue(northProgressID) / MAX_PROGRESS; }
+
+    public float getEastProgress(final Client client) { return (float)client.getVarbitValue(eastProgressID) / MAX_PROGRESS; }
+
+    public float getSouthProgress(final Client client) { return (float)client.getVarbitValue(southProgressID) / MAX_PROGRESS; }
+
+    public float getWestProgress(final Client client) { return (float)client.getVarbitValue(westProgressID) / MAX_PROGRESS; }
 
     public WorldPoint getFinalTile() {
         switch (finalTile)

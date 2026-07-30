@@ -217,13 +217,25 @@ public interface GolemCraftingConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "overlayTileProgress",
+			name = "Show Tile Progress",
+			description = "Shows progress of each side on the tile",
+			section = overlaysSection,
+			position = 6
+	)
+	default boolean showOverlayTileProgress()
+	{
+		return true;
+	}
+
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayTileColour",
 			name = "Tile Colour",
 			description = "The highlight colour for tiles",
 			section = overlaysSection,
-			position = 6
+			position = 7
 	)
 	default Color overlayTileColour()
 	{
@@ -235,7 +247,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Highlight Fur Pouch",
 			description = "Highlight the fur pouch",
 			section = overlaysSection,
-			position = 7
+			position = 8
 	)
 	default boolean showOverlayFurPouch()
 	{
@@ -247,7 +259,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Unknown Colour",
 			description = "The highlight colour for when the fur pouch contents are unknown",
 			section = overlaysSection,
-			position = 8
+			position = 9
 	)
 	default Color overlayFurPouchUnknownColour()
 	{
@@ -259,7 +271,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Low Colour",
 			description = "The highlight colour for when the fur pouch contents are low",
 			section = overlaysSection,
-			position = 9
+			position = 10
 	)
 	default Color overlayFurPouchLowColour()
 	{
@@ -271,7 +283,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Empty Colour",
 			description = "The highlight colour for when the fur pouch is empty",
 			section = overlaysSection,
-			position = 10
+			position = 11
 	)
 	default Color overlayFurPouchEmptyColour()
 	{
@@ -283,7 +295,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Show Fur Pouch Count",
 			description = "Renders the count of furs in the pouch",
 			section = overlaysSection,
-			position = 11
+			position = 12
 	)
 	default boolean showOverlayFurPouchCount()
 	{
@@ -295,7 +307,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Text Colour",
 			description = "The default text colour for the fur pouch",
 			section = overlaysSection,
-			position = 12
+			position = 13
 	)
 	default Color overlayFurPouchTextColour()
 	{
@@ -307,7 +319,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Unknown Text Colour",
 			description = "The text colour for when the fur pouch contents are unknown",
 			section = overlaysSection,
-			position = 13
+			position = 14
 	)
 	default Color overlayFurPouchUnknownTextColour()
 	{
@@ -319,7 +331,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Low Text Colour",
 			description = "The text colour for when the fur pouch contents are low",
 			section = overlaysSection,
-			position = 14
+			position = 15
 	)
 	default Color overlayFurPouchLowTextColour()
 	{
@@ -331,7 +343,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Empty Text Colour",
 			description = "The text colour for when the fur pouch is empty",
 			section = overlaysSection,
-			position = 15
+			position = 16
 	)
 	default Color overlayFurPouchEmptyTextColour()
 	{
@@ -343,7 +355,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Highlight Sunstones",
 			description = "Highlight sunstones when inventory is empty",
 			section = overlaysSection,
-			position = 16
+			position = 17
 	)
 	default SunstoneMode overlaySunstoneMode()
 	{
@@ -356,7 +368,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Sunstone Colour",
 			description = "The highlight colour for sunstones",
 			section = overlaysSection,
-			position = 17
+			position = 18
 	)
 	default Color overlaySunstoneColour()
 	{
