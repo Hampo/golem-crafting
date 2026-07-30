@@ -35,7 +35,7 @@ public class GolemCraftingPlugin extends Plugin
 	private static final int MAX_DISTANCE = 40;
 
 	private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");
-	private static final Set<Integer> LARGE_FUR_POUCH_IDS = Set.of(
+	public static final Set<Integer> LARGE_FUR_POUCH_IDS = Set.of(
 			ItemID.HG_FURPOUCH_LARGE,
 			ItemID.HG_FURPOUCH_LARGE_OPEN
 	);
@@ -104,7 +104,7 @@ public class GolemCraftingPlugin extends Plugin
 	{
 		for (var golem : golems)
 		{
-			var overlay = new GolemOverlay(client, this, golem);
+			var overlay = new GolemOverlay(client, this, config, golem);
 			overlayManager.add(overlay);
 			golemOverlays.add(overlay);
 		}
@@ -317,6 +317,6 @@ public class GolemCraftingPlugin extends Plugin
 			return false;
 
 		var playerLocation = player.getWorldLocation();
-		return playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
+		return true || playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
 	}
 }

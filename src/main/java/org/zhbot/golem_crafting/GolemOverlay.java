@@ -16,14 +16,15 @@ import java.awt.*;
 public class GolemOverlay extends Overlay {
     private final Client client;
     private final GolemCraftingPlugin plugin;
+    private final GolemCraftingConfig config;
     private final Golem golem;
 
-    public GolemOverlay(Client client, GolemCraftingPlugin plugin, Golem golem)
+    public GolemOverlay(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config, Golem golem)
     {
         this.client = client;
         this.plugin = plugin;
+        this.config = config;
         this.golem = golem;
-        //this.config = config;
 
         setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.ABOVE_SCENE);
@@ -56,7 +57,8 @@ public class GolemOverlay extends Overlay {
             }
             else
             {
-                renderObject(graphics, station, new Color(0, 255, 0, 75));
+                if (config.showOverlayPlinth())
+                    renderObject(graphics, station, config.overlayPlinthValidColour());
             }
 
             return null;
@@ -71,32 +73,37 @@ public class GolemOverlay extends Overlay {
         if (progress == 5)
         {
             onValidTile = playerLocation.distanceTo(golem.getFinalTile()) == 0;
-            renderTile(graphics, golem.getFinalTile());
+            if (config.showOverlayTiles())
+                renderTile(graphics, golem.getFinalTile());
         }
         else
         {
             if (!golem.isNorthDone(client))
             {
                 onValidTile = playerLocation.distanceTo(golem.getNorthTile()) == 0;
-                renderTile(graphics, golem.getNorthTile());
+                if (config.showOverlayTiles())
+                    renderTile(graphics, golem.getNorthTile());
             }
 
             if (!golem.isEastDone(client))
             {
                 onValidTile = onValidTile || playerLocation.distanceTo(golem.getEastTile()) == 0;
-                renderTile(graphics, golem.getEastTile());
+                if (config.showOverlayTiles())
+                    renderTile(graphics, golem.getEastTile());
             }
 
             if (!golem.isSouthDone(client))
             {
                 onValidTile = onValidTile || playerLocation.distanceTo(golem.getSouthTile()) == 0;
-                renderTile(graphics, golem.getSouthTile());
+                if (config.showOverlayTiles())
+                    renderTile(graphics, golem.getSouthTile());
             }
 
             if (!golem.isWestDone(client))
             {
                 onValidTile = onValidTile || playerLocation.distanceTo(golem.getWestTile()) == 0;
-                renderTile(graphics, golem.getWestTile());
+                if (config.showOverlayTiles())
+                    renderTile(graphics, golem.getWestTile());
             }
         }
 
@@ -104,7 +111,8 @@ public class GolemOverlay extends Overlay {
         if (station == null)
             return null;
 
-        renderObject(graphics, station, onValidTile ? new Color(0, 255, 0, 75) : new Color(255, 0, 0, 75));
+        if (config.showOverlayPlinth())
+            renderObject(graphics, station, onValidTile ? config.overlayPlinthValidColour() : config.overlayPlinthInvalidColour());
 
         return null;
     }
@@ -116,7 +124,7 @@ public class GolemOverlay extends Overlay {
             return;
 
         var tilePoly = Perspective.getCanvasTilePoly(client, localPoint);
-        OverlayUtil.renderPolygon(graphics, tilePoly, Color.GREEN);
+        OverlayUtil.renderPolygon(graphics, tilePoly, config.overlayTileColour());
     }
 
     private void renderObject(Graphics2D graphics, GameObject gameObject, Color color)

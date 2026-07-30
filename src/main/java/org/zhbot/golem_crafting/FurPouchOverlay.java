@@ -13,14 +13,14 @@ public class FurPouchOverlay extends WidgetItemOverlay {
 
     private final Client client;
     private final GolemCraftingPlugin plugin;
-    //private final GolemCraftingConfig config;
+    private final GolemCraftingConfig config;
 
     @Inject
-    private FurPouchOverlay(Client client, GolemCraftingPlugin plugin/*, GolemCraftingConfig config*/)
+    private FurPouchOverlay(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config)
     {
         this.client = client;
         this.plugin = plugin;
-        //this.config = config;
+        this.config = config;
 
         showOnInventory();
         setPriority(2f);
@@ -28,11 +28,7 @@ public class FurPouchOverlay extends WidgetItemOverlay {
 
     @Override
     public void renderItemOverlay(Graphics2D graphics, int itemId, WidgetItem widgetItem) {
-        if (itemId != ItemID.HG_FURPOUCH_LARGE && itemId != ItemID.HG_FURPOUCH_LARGE_OPEN)
-            return;
-
-        var furPouchCount = plugin.getFurPouchCount();
-        if (furPouchCount > 5)
+        if (!GolemCraftingPlugin.LARGE_FUR_POUCH_IDS.contains((itemId)))
             return;
 
         var bounds = widgetItem.getCanvasBounds();
@@ -42,13 +38,32 @@ public class FurPouchOverlay extends WidgetItemOverlay {
         if (!plugin.isWithinGolemArea())
             return;
 
+        var furPouchCount = plugin.getFurPouchCount();
+
+        renderBox(graphics, bounds, furPouchCount);
+
+        if (!config.showOverlayFurPouchCount())
+            return;
+
+        String text = (furPouchCount == -1) ? "?" : String.valueOf(furPouchCount);
+        graphics.setFont(net.runelite.client.ui.FontManager.getRunescapeSmallFont());
+        graphics.setColor(Color.WHITE);
+
+        graphics.drawString(text, bounds.x + 2, bounds.y + 10);
+    }
+
+    private void renderBox(Graphics2D graphics, Rectangle bounds, int furPouchCount)
+    {
+        if (furPouchCount > config.overlayFurPouchLowThreshold())
+            return;
+
         Color color;
         if (furPouchCount == 0)
-            color = Color.RED;
+            color = config.overlayFurPouchEmptyColour();
         else if (furPouchCount == -1)
-            color = Color.YELLOW;
+            color = config.overlayFurPouchUnknownColour();
         else
-            color = new Color(204, 102, 0);
+            color = config.overlayFurPouchLowColour();
 
         graphics.setColor(color);
         graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
