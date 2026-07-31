@@ -37,7 +37,8 @@ public class FurPouchOverlay extends WidgetItemOverlay {
 
         var furPouchCount = plugin.getFurPouchCount();
 
-        renderBox(graphics, bounds, furPouchCount);
+        if (config.showOverlayFurPouch())
+            renderBox(graphics, bounds, furPouchCount);
 
         if (!config.showOverlayFurPouchCount())
             return;

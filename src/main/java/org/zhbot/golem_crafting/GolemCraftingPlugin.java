@@ -125,7 +125,6 @@ public class GolemCraftingPlugin extends Plugin
 			overlayManager.add(overlay);
 			golemOverlays.add(overlay);
 		}
-		overlayManager.add(sunstoneOverlay);
 
 		updateConfig();
 	}
@@ -154,10 +153,15 @@ public class GolemCraftingPlugin extends Plugin
 		else
 			overlayManager.remove(infobox);
 
-		if(config.showOverlayFurPouch())
+		if(config.showOverlayFurPouch() || config.showOverlayFurPouchCount())
 			overlayManager.add(furPouchOverlay);
 		else
 			overlayManager.remove(furPouchOverlay);
+
+		if (config.overlaySunstoneMode() != SunstoneMode.NONE)
+			overlayManager.add(sunstoneOverlay);
+		else
+			overlayManager.remove(sunstoneOverlay);
 	}
 
 	@Subscribe
