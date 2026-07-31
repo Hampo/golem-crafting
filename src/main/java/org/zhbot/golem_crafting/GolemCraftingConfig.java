@@ -163,11 +163,20 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "overlayPlinthRenderStyle",
+			name = "Render style",
+			description = "Choose style of overlay for the plinth",
+			section = plinthSection,
+			position = 1
+	)
+	default RenderMode overlayPlinthRenderStyle() { return RenderMode.CLICKBOX; }
+
+	@ConfigItem(
 			keyName = "overlayPlinthEfficiency",
 			name = "Highlight Efficiency",
 			description = "Highlight the golem plinth in a different colour when it's efficient to click",
 			section = plinthSection,
-			position = 1
+			position = 2
 	)
 	default boolean showOverlayPlinthEfficiency()
 	{
@@ -371,13 +380,22 @@ public interface GolemCraftingConfig extends Config
 		return SunstoneMode.ROCKS;
 	}
 
+	@ConfigItem(
+			keyName = "overlaySunstoneRenderStyle",
+			name = "Render style",
+			description = "Choose style of overlay for the sunstone",
+			section = sunstoneSection,
+			position = 1
+	)
+	default RenderMode overlaySunstoneRenderStyle() { return RenderMode.CLICKBOX; }
+
 	@Alpha
 	@ConfigItem(
 			keyName = "overlaySunstoneColour",
 			name = "Sunstone Colour",
 			description = "The highlight colour for sunstones",
 			section = sunstoneSection,
-			position = 1
+			position = 2
 	)
 	default Color overlaySunstoneColour()
 	{

@@ -60,7 +60,7 @@ public class GolemOverlay extends Overlay {
             else
             {
                 if (config.showOverlayPlinth())
-                    renderObject(graphics, station, config.overlayPlinthValidColour());
+                    renderObject(graphics, station, config.overlayPlinthRenderStyle(), config.overlayPlinthValidColour());
             }
 
             return null;
@@ -173,7 +173,7 @@ public class GolemOverlay extends Overlay {
                 color = config.overlayPlinthEfficiencyColour();
             else
                 color = (isFinalStep ? config.overlayPlinthValidCoreColour() : config.overlayPlinthValidColour());
-            renderObject(graphics, station, color);
+            renderObject(graphics, station, config.overlayPlinthRenderStyle(), color);
         }
 
         if (isFinalStep && config.showOverlayPlinthCore())
@@ -214,12 +214,12 @@ public class GolemOverlay extends Overlay {
         OverlayUtil.renderPolygon(graphics, tilePoly, color);
     }
 
-    private void renderObject(Graphics2D graphics, GameObject gameObject, Color color)
+    private void renderObject(Graphics2D graphics, GameObject gameObject, RenderMode renderMode, Color color)
     {
-        var clickbox = gameObject.getClickbox();
+        var area = renderMode == RenderMode.CLICKBOX ? gameObject.getClickbox() : gameObject.getConvexHull();
         var mousePosition = client.getMouseCanvasPosition();
 
-        OverlayUtil.renderHoverableArea(graphics, clickbox, mousePosition, color, color, color.darker());
+        OverlayUtil.renderHoverableArea(graphics, area, mousePosition, color, color, color.darker());
     }
 
     private void renderPie(Graphics2D graphics, WorldPoint worldPoint, float progress, Color color)

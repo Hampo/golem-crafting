@@ -65,12 +65,12 @@ public class SunstoneOverlay extends Overlay {
 
                     if (sunstoneMode == SunstoneMode.MONOLITH && gameObject.getId() == SUNSTONE_MONOLITH_ID)
                     {
-                        renderObject(graphics, gameObject, config.overlaySunstoneColour());
+                        renderObject(graphics, gameObject, config.overlaySunstoneRenderStyle(), config.overlaySunstoneColour());
                         return null;
                     }
 
                     if (sunstoneMode == SunstoneMode.ROCKS && SUNSTONE_ROCK_IDS.contains(gameObject.getId()))
-                        renderObject(graphics, gameObject, config.overlaySunstoneColour());
+                        renderObject(graphics, gameObject, config.overlaySunstoneRenderStyle(), config.overlaySunstoneColour());
                 }
             }
         }
@@ -78,11 +78,11 @@ public class SunstoneOverlay extends Overlay {
         return null;
     }
 
-    private void renderObject(Graphics2D graphics, GameObject gameObject, Color color)
+    private void renderObject(Graphics2D graphics, GameObject gameObject, RenderMode renderMode, Color color)
     {
-        var clickbox = gameObject.getClickbox();
+        var area = renderMode == RenderMode.CLICKBOX ? gameObject.getClickbox() : gameObject.getConvexHull();
         var mousePosition = client.getMouseCanvasPosition();
 
-        OverlayUtil.renderHoverableArea(graphics, clickbox, mousePosition, color, color, color.darker());
+        OverlayUtil.renderHoverableArea(graphics, area, mousePosition, color, color, color.darker());
     }
 }
