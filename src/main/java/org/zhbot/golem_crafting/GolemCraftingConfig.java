@@ -9,10 +9,18 @@ public interface GolemCraftingConfig extends Config
 {
 	String group = "golem-crafting";
 
+	@ConfigSection(
+			name = "Notifications",
+			description = "Configure notifications",
+			position = 0
+	)
+	String notificationsSection = "notificationsSection";
+
 	@ConfigItem(
 			keyName = "notifications",
 			name = "Notifications",
 			description = "Configures all notifications",
+			section = notificationsSection,
 			position = 0
 	)
 	default Notification notification()
@@ -20,21 +28,10 @@ public interface GolemCraftingConfig extends Config
 		return Notification.ON;
 	}
 
-	@ConfigItem(
-			keyName = "furPouchLowThreshold",
-			name = "Fur Pouch Low Threshold",
-			description = "The threshold for fur pouch contents to be deemed low",
-			position = 1
-	)
-	default int furPouchLowThreshold()
-	{
-		return 5;
-	}
-
 	@ConfigSection(
 			name = "Infobox",
 			description = "Configure the infobox",
-			position = 2
+			position = 1
 	)
 	String infoboxSection = "infoboxSection";
 
@@ -135,17 +132,17 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigSection(
-			name = "Overlays",
-			description = "Configure the various overlays",
-			position = 3
+			name = "Plinth",
+			description = "Configure the plinth settings",
+			position = 2
 	)
-	String overlaysSection = "overlaysSection";
+	String plinthSection = "plinthSection";
 
 	@ConfigItem(
 			keyName = "overlayPlinth",
 			name = "Highlight Plinth",
 			description = "Highlight the golem plinths",
-			section = overlaysSection,
+			section = plinthSection,
 			position = 0
 	)
 	default boolean showOverlayPlinth()
@@ -156,9 +153,9 @@ public interface GolemCraftingConfig extends Config
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayPlinthValidColour",
-			name = "Plinth Valid Colour",
+			name = "Valid Colour",
 			description = "The highlight colour for plinth when action is valid",
-			section = overlaysSection,
+			section = plinthSection,
 			position = 1
 	)
 	default Color overlayPlinthValidColour()
@@ -169,9 +166,9 @@ public interface GolemCraftingConfig extends Config
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayPlinthInvalidColour",
-			name = "Plinth Invalid Colour",
+			name = "Invalid Colour",
 			description = "The highlight colour for plinth when action is invalid",
-			section = overlaysSection,
+			section = plinthSection,
 			position = 2
 	)
 	default Color overlayPlinthInvalidColour()
@@ -182,9 +179,9 @@ public interface GolemCraftingConfig extends Config
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayPlinthValidCoreColour",
-			name = "Plinth Valid Core Colour",
+			name = "Valid Core Colour",
 			description = "The highlight colour for plinth when you're on the right tile to insert the core",
-			section = overlaysSection,
+			section = plinthSection,
 			position = 3
 	)
 	default Color overlayPlinthValidCoreColour()
@@ -195,9 +192,9 @@ public interface GolemCraftingConfig extends Config
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayPlinthInvalidCoreColour",
-			name = "Plinth Invalid Core Colour",
+			name = "Invalid Core Colour",
 			description = "The highlight colour for plinth when you're on the wrong tile to insert the core",
-			section = overlaysSection,
+			section = plinthSection,
 			position = 4
 	)
 	default Color overlayPlinthInvalidCoreColour()
@@ -205,26 +202,21 @@ public interface GolemCraftingConfig extends Config
 		return new Color(255, 0, 0, 75);
 	}
 
-	@ConfigItem(
-			keyName = "overlayTiles",
-			name = "Highlight Tiles",
-			description = "Highlight the valid tiles",
-			section = overlaysSection,
-			position = 5
+	@ConfigSection(
+			name = "Tiles",
+			description = "Configure tiles settings",
+			position = 3
 	)
-	default boolean showOverlayTiles()
-	{
-		return true;
-	}
+	String tilesSection = "tilesSection";
 
 	@ConfigItem(
-			keyName = "overlayTileProgress",
-			name = "Show Tile Progress",
-			description = "Shows progress of each side on the tile",
-			section = overlaysSection,
-			position = 6
+			keyName = "overlayTiles",
+			name = "Highlight Incomplete",
+			description = "Highlight the incomplete tiles",
+			section = tilesSection,
+			position = 0
 	)
-	default boolean showOverlayTileProgress()
+	default boolean showOverlayTiles()
 	{
 		return true;
 	}
@@ -232,10 +224,10 @@ public interface GolemCraftingConfig extends Config
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayTileColour",
-			name = "Tile Colour",
-			description = "The highlight colour for tiles",
-			section = overlaysSection,
-			position = 7
+			name = "Incomplete Colour",
+			description = "The highlight colour for incomplete tiles",
+			section = tilesSection,
+			position = 1
 	)
 	default Color overlayTileColour()
 	{
@@ -243,119 +235,55 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "overlayFurPouch",
-			name = "Highlight Fur Pouch",
-			description = "Highlight the fur pouch",
-			section = overlaysSection,
-			position = 8
+			keyName = "overlayCompleteTiles",
+			name = "Highlight Complete",
+			description = "Highlight the complete tiles",
+			section = tilesSection,
+			position = 2
 	)
-	default boolean showOverlayFurPouch()
+	default boolean showOverlayCompleteTiles()
+	{
+		return false;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "overlayTileCompleteColour",
+			name = "Complete Colour",
+			description = "The highlight colour for complete tiles",
+			section = tilesSection,
+			position = 3
+	)
+	default Color overlayTileCompleteColour()
+	{
+		return Color.RED;
+	}
+
+	@ConfigItem(
+			keyName = "overlayTileProgress",
+			name = "Show Tile Progress",
+			description = "Shows progress of each side on the tile",
+			section = tilesSection,
+			position = 4
+	)
+	default boolean showOverlayTileProgress()
 	{
 		return true;
 	}
 
-	@ConfigItem(
-			keyName = "overlayFurPouchUnknownColour",
-			name = "Fur Pouch Unknown Colour",
-			description = "The highlight colour for when the fur pouch contents are unknown",
-			section = overlaysSection,
-			position = 9
+	@ConfigSection(
+			name = "Sunstone",
+			description = "Configure sunstone settings",
+			position = 4
 	)
-	default Color overlayFurPouchUnknownColour()
-	{
-		return new Color(255, 255, 0);
-	}
-
-	@ConfigItem(
-			keyName = "overlayFurPouchLowColour",
-			name = "Fur Pouch Low Colour",
-			description = "The highlight colour for when the fur pouch contents are low",
-			section = overlaysSection,
-			position = 10
-	)
-	default Color overlayFurPouchLowColour()
-	{
-		return new Color(255, 121, 0);
-	}
-
-	@ConfigItem(
-			keyName = "overlayFurPouchEmptyColour",
-			name = "Fur Pouch Empty Colour",
-			description = "The highlight colour for when the fur pouch is empty",
-			section = overlaysSection,
-			position = 11
-	)
-	default Color overlayFurPouchEmptyColour()
-	{
-		return new Color(255, 0, 0);
-	}
-
-	@ConfigItem(
-			keyName = "overlayFurPouchCount",
-			name = "Show Fur Pouch Count",
-			description = "Renders the count of furs in the pouch",
-			section = overlaysSection,
-			position = 12
-	)
-	default boolean showOverlayFurPouchCount()
-	{
-		return true;
-	}
-
-	@ConfigItem(
-			keyName = "overlayFurPouchTextColour",
-			name = "Fur Pouch Text Colour",
-			description = "The default text colour for the fur pouch",
-			section = overlaysSection,
-			position = 13
-	)
-	default Color overlayFurPouchTextColour()
-	{
-		return new Color(255, 255, 255);
-	}
-
-	@ConfigItem(
-			keyName = "overlayFurPouchUnknownTextColour",
-			name = "Fur Pouch Unknown Text Colour",
-			description = "The text colour for when the fur pouch contents are unknown",
-			section = overlaysSection,
-			position = 14
-	)
-	default Color overlayFurPouchUnknownTextColour()
-	{
-		return new Color(255, 255, 0);
-	}
-
-	@ConfigItem(
-			keyName = "overlayFurPouchLowTextColour",
-			name = "Fur Pouch Low Text Colour",
-			description = "The text colour for when the fur pouch contents are low",
-			section = overlaysSection,
-			position = 15
-	)
-	default Color overlayFurPouchLowTextColour()
-	{
-		return new Color(255, 121, 0);
-	}
-
-	@ConfigItem(
-			keyName = "overlayFurPouchEmptyTextColour",
-			name = "Fur Pouch Empty Text Colour",
-			description = "The text colour for when the fur pouch is empty",
-			section = overlaysSection,
-			position = 16
-	)
-	default Color overlayFurPouchEmptyTextColour()
-	{
-		return new Color(255, 0, 0);
-	}
+	String sunstoneSection = "sunstoneSection";
 
 	@ConfigItem(
 			keyName = "overlaySunstoneMode",
 			name = "Highlight Sunstones",
 			description = "Highlight sunstones when inventory is empty",
-			section = overlaysSection,
-			position = 17
+			section = sunstoneSection,
+			position = 0
 	)
 	default SunstoneMode overlaySunstoneMode()
 	{
@@ -367,11 +295,150 @@ public interface GolemCraftingConfig extends Config
 			keyName = "overlaySunstoneColour",
 			name = "Sunstone Colour",
 			description = "The highlight colour for sunstones",
-			section = overlaysSection,
-			position = 18
+			section = sunstoneSection,
+			position = 1
 	)
 	default Color overlaySunstoneColour()
 	{
 		return new Color(0, 255, 0, 75);
+	}
+
+	@ConfigSection(
+			name = "Fur Pouch",
+			description = "Configure fur pouch settings",
+			position = 5
+	)
+	String furPouchSection = "furPouchSection";
+
+	@ConfigItem(
+			keyName = "furPouchLowThreshold",
+			name = "Low Threshold",
+			description = "The threshold for fur pouch contents to be deemed low",
+			section = furPouchSection,
+			position = 0
+	)
+	default int furPouchLowThreshold()
+	{
+		return 5;
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouch",
+			name = "Highlight Inventory",
+			description = "Highlight the fur pouch in inventory",
+			section = furPouchSection,
+			position = 0
+	)
+	default boolean showOverlayFurPouch()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchColour",
+			name = "Default Colour",
+			description = "The default highlight colour for the fur pouch",
+			section = furPouchSection,
+			position = 1
+	)
+	default Color overlayFurPouchColour()
+	{
+		return new Color(0, 255, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchLowColour",
+			name = "Low Colour",
+			description = "The highlight colour for when the fur pouch contents are low",
+			section = furPouchSection,
+			position = 2
+	)
+	default Color overlayFurPouchLowColour()
+	{
+		return new Color(255, 121, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchEmptyColour",
+			name = "Empty Colour",
+			description = "The highlight colour for when the fur pouch is empty",
+			section = furPouchSection,
+			position = 3
+	)
+	default Color overlayFurPouchEmptyColour()
+	{
+		return new Color(255, 0, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchUnknownColour",
+			name = "Unknown Colour",
+			description = "The highlight colour for when the fur pouch contents are unknown",
+			section = furPouchSection,
+			position = 4
+	)
+	default Color overlayFurPouchUnknownColour()
+	{
+		return new Color(255, 255, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchCount",
+			name = "Show Count",
+			description = "Renders the count of furs in the pouch",
+			section = furPouchSection,
+			position = 5
+	)
+	default boolean showOverlayFurPouchCount()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchTextColour",
+			name = "Default Text Colour",
+			description = "The default text colour for the fur pouch",
+			section = furPouchSection,
+			position = 6
+	)
+	default Color overlayFurPouchTextColour()
+	{
+		return new Color(255, 255, 255);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchUnknownTextColour",
+			name = "Unknown Text Colour",
+			description = "The text colour for when the fur pouch contents are unknown",
+			section = furPouchSection,
+			position = 7
+	)
+	default Color overlayFurPouchUnknownTextColour()
+	{
+		return new Color(255, 255, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchLowTextColour",
+			name = "Low Text Colour",
+			description = "The text colour for when the fur pouch contents are low",
+			section = furPouchSection,
+			position = 8
+	)
+	default Color overlayFurPouchLowTextColour()
+	{
+		return new Color(255, 121, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchEmptyTextColour",
+			name = "Empty Text Colour",
+			description = "The text colour for when the fur pouch is empty",
+			section = furPouchSection,
+			position = 16
+	)
+	default Color overlayFurPouchEmptyTextColour()
+	{
+		return new Color(255, 0, 0);
 	}
 }
