@@ -18,7 +18,6 @@ import java.awt.*;
 
 public class GolemOverlay extends Overlay {
     private static final int SUNSTONE_CORE_ID = 34022;
-    private static final int Z_OFFSET = 200;
 
     private final Client client;
     private final GolemCraftingPlugin plugin;
@@ -73,6 +72,7 @@ public class GolemOverlay extends Overlay {
         var playerLocation = player.getWorldLocation();
         var onValidTile = false;
 
+        var currentSide = CardinalDirection.NONE;
         var isFinalStep = progress == 5;
         if (isFinalStep)
         {
@@ -85,7 +85,12 @@ public class GolemOverlay extends Overlay {
         {
             if (!golem.isNorthDone(client))
             {
-                onValidTile = playerLocation.distanceTo(golem.getNorthTile()) == 0;
+                if (playerLocation.distanceTo(golem.getNorthTile()) == 0)
+                {
+                    onValidTile = true;
+                    currentSide = CardinalDirection.NORTH;
+                }
+
                 if (config.showOverlayTiles())
                     renderTile(graphics, golem.getNorthTile(), config.overlayTileColour());
 
@@ -99,7 +104,12 @@ public class GolemOverlay extends Overlay {
 
             if (!golem.isEastDone(client))
             {
-                onValidTile = onValidTile || playerLocation.distanceTo(golem.getEastTile()) == 0;
+                if (playerLocation.distanceTo(golem.getEastTile()) == 0)
+                {
+                    onValidTile = true;
+                    currentSide = CardinalDirection.EAST;
+                }
+
                 if (config.showOverlayTiles())
                     renderTile(graphics, golem.getEastTile(), config.overlayTileColour());
 
@@ -113,7 +123,12 @@ public class GolemOverlay extends Overlay {
 
             if (!golem.isSouthDone(client))
             {
-                onValidTile = onValidTile || playerLocation.distanceTo(golem.getSouthTile()) == 0;
+                if (playerLocation.distanceTo(golem.getSouthTile()) == 0)
+                {
+                    onValidTile = true;
+                    currentSide = CardinalDirection.SOUTH;
+                }
+
                 if (config.showOverlayTiles())
                     renderTile(graphics, golem.getSouthTile(), config.overlayTileColour());
 
@@ -127,7 +142,12 @@ public class GolemOverlay extends Overlay {
 
             if (!golem.isWestDone(client))
             {
-                onValidTile = onValidTile || playerLocation.distanceTo(golem.getWestTile()) == 0;
+                if (playerLocation.distanceTo(golem.getWestTile()) == 0)
+                {
+                    onValidTile = true;
+                    currentSide = CardinalDirection.WEST;
+                }
+
                 if (config.showOverlayTiles())
                     renderTile(graphics, golem.getWestTile(), config.overlayTileColour());
 
@@ -158,6 +178,28 @@ public class GolemOverlay extends Overlay {
 
         if (isFinalStep && config.showOverlayPlinthCore())
             renderItem(graphics, station, SUNSTONE_CORE_ID);
+        else if (!isFinalStep && currentSide != CardinalDirection.NONE && config.showOverlayPlinthProgress())
+        {
+            var currentProgress = 0f;
+            switch (currentSide)
+            {
+                case NORTH:
+                    currentProgress = golem.getNorthProgress(client);
+                    break;
+                case EAST:
+                    currentProgress = golem.getEastProgress(client);
+                    break;
+                case SOUTH:
+                    currentProgress = golem.getSouthProgress(client);
+                    break;
+                case WEST:
+                    currentProgress = golem.getWestProgress(client);
+                    break;
+            }
+
+            renderPie(graphics, station, currentProgress, Color.ORANGE);
+        }
+
 
         return null;
     }
@@ -196,6 +238,20 @@ public class GolemOverlay extends Overlay {
         renderPie(graphics, point, progress, color);
     }
 
+    private void renderPie(Graphics2D graphics, GameObject gameObject, float progress, Color color)
+    {
+        if (gameObject == null)
+            return;
+
+        var localPoint = gameObject.getLocalLocation();
+
+        var point = Perspective.localToCanvas(client, localPoint, gameObject.getPlane(), config.overlayZOffset());
+        if (point == null)
+            return;
+
+        renderPie(graphics, point, progress, color);
+    }
+
     private void renderPie(Graphics2D graphics, Point position, float progress, Color color)
     {
         ProgressPieComponent pie = new ProgressPieComponent();
@@ -212,6 +268,6 @@ public class GolemOverlay extends Overlay {
         if (itemImage == null)
             return;
 
-        OverlayUtil.renderImageLocation(client, graphics, gameObject.getLocalLocation(), itemImage, Z_OFFSET);
+        OverlayUtil.renderImageLocation(client, graphics, gameObject.getLocalLocation(), itemImage, config.overlayZOffset());
     }
 }

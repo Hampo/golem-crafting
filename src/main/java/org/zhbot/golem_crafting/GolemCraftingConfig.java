@@ -175,15 +175,39 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "overlayPlinth",
+			keyName = "overlayPlinthProgress",
+			name = "Show Current Progress",
+			description = "Show progress of current side",
+			section = plinthSection,
+			position = 2
+	)
+	default boolean showOverlayPlinthProgress()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "overlayPlinthCore",
 			name = "Show Sunlight Core",
 			description = "Render a sunlight core on final stage",
 			section = plinthSection,
-			position = 2
+			position = 3
 	)
 	default boolean showOverlayPlinthCore()
 	{
 		return true;
+	}
+
+	@ConfigItem(
+			keyName = "overlayPlinthZOffset",
+			name = "Progress/Core Z Offset",
+			description = "The Z offset for the progress/core overlay, relative to the plinth",
+			section = plinthSection,
+			position = 4
+	)
+	default int overlayZOffset()
+	{
+		return 290;
 	}
 
 	@Alpha
@@ -192,7 +216,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Valid Colour",
 			description = "The highlight colour for plinth when action is valid",
 			section = plinthSection,
-			position = 3
+			position = 5
 	)
 	default Color overlayPlinthValidColour()
 	{
@@ -205,7 +229,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Efficiency Colour",
 			description = "The highlight colour for plinth when it's efficient to click again",
 			section = plinthSection,
-			position = 4
+			position = 6
 	)
 	default Color overlayPlinthEfficiencyColour()
 	{
@@ -218,7 +242,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Invalid Colour",
 			description = "The highlight colour for plinth when action is invalid",
 			section = plinthSection,
-			position = 5
+			position = 7
 	)
 	default Color overlayPlinthInvalidColour()
 	{
@@ -231,7 +255,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Valid Core Colour",
 			description = "The highlight colour for plinth when you're on the right tile to insert the core",
 			section = plinthSection,
-			position = 6
+			position = 8
 	)
 	default Color overlayPlinthValidCoreColour()
 	{
@@ -244,7 +268,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Invalid Core Colour",
 			description = "The highlight colour for plinth when you're on the wrong tile to insert the core",
 			section = plinthSection,
-			position = 7
+			position = 9
 	)
 	default Color overlayPlinthInvalidCoreColour()
 	{
