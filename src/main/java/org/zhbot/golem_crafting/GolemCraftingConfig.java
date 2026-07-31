@@ -486,6 +486,18 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "gameChatHideRepeatedAngle",
+			name = "Hide repeated angle",
+			description = "Hide the game chat message when you click an angle already completed",
+			section = gameChatSection,
+			position = 0
+	)
+	default boolean gameChatHideRepeatedAngle()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 			keyName = "gameChatHideTotal",
 			name = "Hide total",
 			description = "Hide the game chat message with the total golems crafted",

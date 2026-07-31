@@ -61,6 +61,7 @@ public class GolemCraftingPlugin extends Plugin
 	);
 
 	private static final String FINISH_ANGLE_MESSAGE = "You finish crafting the golem from this angle.";
+	private static final String REPEATED_ANGLE_MESSAGE = "You've already crafted this side of the golem.";
 	private static final Pattern TOTAL_GOLEMS_MESSAGE = Pattern.compile("You have crafted \\d+ golems on Wyrmscraig\\.");
 	private static final Pattern LOOT_MESSAGE = Pattern.compile("As you complete the golem it leaves a gift on the ground for you: (\\d+) x (.*)\\.");
 
@@ -214,6 +215,7 @@ public class GolemCraftingPlugin extends Plugin
 
 		hideMessage = hideMessage ||
 						(config.gameChatHideAngle() && message.contains(FINISH_ANGLE_MESSAGE)) ||
+						(config.gameChatHideRepeatedAngle() && message.contains(REPEATED_ANGLE_MESSAGE)) ||
 						(config.gameChatHideTotal() && TOTAL_GOLEMS_MESSAGE.matcher(message).matches());
 
 		if (!hideMessage && config.gameChatHideLoot())
