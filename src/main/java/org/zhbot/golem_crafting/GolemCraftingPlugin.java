@@ -223,13 +223,7 @@ public class GolemCraftingPlugin extends Plugin
 						(config.gameChatHideAngle() && message.contains(FINISH_ANGLE_MESSAGE)) ||
 						(config.gameChatHideRepeatedAngle() && message.contains(REPEATED_ANGLE_MESSAGE)) ||
 						(config.gameChatHideTotal() && TOTAL_GOLEMS_MESSAGE.matcher(message).matches());
-
-		if (!hideMessage && config.gameChatHideLoot())
-		{
-			var matcher = LOOT_MESSAGE.matcher(message);
-			if (matcher.matches())
-				hideMessage = !config.gameChatHideLootExcludeChisel() || !matcher.group(1).toLowerCase(Locale.ROOT).contains("jeweller's chisel");
-		}
+		
 		if (hideMessage)
 		{
 			final ChatLineBuffer lineBuffer = client.getChatLineMap().get(ChatMessageType.GAMEMESSAGE.getType());
