@@ -61,16 +61,15 @@ public class FurPouchOverlay extends WidgetItemOverlay {
 
     private void renderBox(Graphics2D graphics, Rectangle bounds, int furPouchCount)
     {
-        if (furPouchCount > config.furPouchLowThreshold())
-            return;
-
         Color color;
         if (furPouchCount == 0)
             color = config.overlayFurPouchEmptyColour();
         else if (furPouchCount == -1)
             color = config.overlayFurPouchUnknownColour();
-        else
+        else if (furPouchCount <= config.furPouchLowThreshold())
             color = config.overlayFurPouchLowColour();
+        else
+            color = config.overlayFurPouchColour();
 
         graphics.setColor(color);
         graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
