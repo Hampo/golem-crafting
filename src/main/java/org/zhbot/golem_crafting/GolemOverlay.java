@@ -147,20 +147,12 @@ public class GolemOverlay extends Overlay {
         if (config.showOverlayPlinth())
         {
             Color color;
-            if (onValidTile)
-            {
-                if (progress > 0 && progress < 5 && plugin.isCrafting() && client.getVarbitValue(VarbitID.BUSY) == 0)
-                {
-                    color = config.overlayPlinthEfficiencyColour();
-                }
-                else
-                {
-                    color = (isFinalStep ? config.overlayPlinthValidCoreColour() : config.overlayPlinthValidColour());
-                }
-            }
-            else {
+            if (!onValidTile)
                 color = isFinalStep ? config.overlayPlinthInvalidCoreColour() : config.overlayPlinthInvalidColour();
-            }
+            else if (progress > 0 && progress < 5 && plugin.isCrafting() && client.getVarbitValue(VarbitID.BUSY) == 0)
+                color = config.overlayPlinthEfficiencyColour();
+            else
+                color = (isFinalStep ? config.overlayPlinthValidCoreColour() : config.overlayPlinthValidColour());
             renderObject(graphics, station, color);
         }
 
