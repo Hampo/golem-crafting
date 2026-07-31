@@ -6,6 +6,7 @@ import net.runelite.api.Perspective;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -15,16 +16,21 @@ import net.runelite.client.ui.overlay.components.ProgressPieComponent;
 import java.awt.*;
 
 public class GolemOverlay extends Overlay {
+    private static final int SUNSTONE_CORE_ID = 34022;
+    private static final int Z_OFFSET = 200;
+
     private final Client client;
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
+    private final ItemManager itemManager;
     private final Golem golem;
 
-    public GolemOverlay(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config, Golem golem)
+    public GolemOverlay(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config, ItemManager itemManager, Golem golem)
     {
         this.client = client;
         this.plugin = plugin;
         this.config = config;
+        this.itemManager = itemManager;
         this.golem = golem;
 
         setPosition(OverlayPosition.DYNAMIC);
@@ -69,6 +75,7 @@ public class GolemOverlay extends Overlay {
         if (progress == 5)
         {
             onValidTile = playerLocation.distanceTo(golem.getFinalTile()) == 0;
+
             if (config.showOverlayTiles())
                 renderTile(graphics, golem.getFinalTile(), config.overlayTileColour());
         }
@@ -138,6 +145,9 @@ public class GolemOverlay extends Overlay {
         if (config.showOverlayPlinth())
             renderObject(graphics, station, onValidTile ? (progress == 5 ? config.overlayPlinthValidCoreColour() : config.overlayPlinthValidColour()) : (progress == 5 ? config.overlayPlinthInvalidCoreColour() : config.overlayPlinthInvalidColour()));
 
+        if (progress == 5 && config.showOverlayPlinthCore())
+            renderItem(graphics, station, SUNSTONE_CORE_ID);
+
         return null;
     }
 
@@ -183,5 +193,14 @@ public class GolemOverlay extends Overlay {
         pie.setBorderColor(color.darker());
         pie.setFill(color);
         pie.render(graphics);
+    }
+
+    private void renderItem(Graphics2D graphics, GameObject gameObject, int itemId)
+    {
+        var itemImage = itemManager.getImage(itemId);
+        if (itemImage == null)
+            return;
+
+        OverlayUtil.renderImageLocation(client, graphics, gameObject.getLocalLocation(), itemImage, Z_OFFSET);
     }
 }

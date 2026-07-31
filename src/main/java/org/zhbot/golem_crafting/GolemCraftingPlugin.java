@@ -16,6 +16,7 @@ import net.runelite.client.Notifier;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
+import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -71,6 +72,9 @@ public class GolemCraftingPlugin extends Plugin
 	private OverlayManager overlayManager;
 
 	@Inject
+	private ItemManager itemManager;
+
+	@Inject
 	private FurPouchOverlay furPouchOverlay;
 
 	@Inject
@@ -107,7 +111,7 @@ public class GolemCraftingPlugin extends Plugin
 	{
 		for (var golem : golems)
 		{
-			var overlay = new GolemOverlay(client, this, config, golem);
+			var overlay = new GolemOverlay(client, this, config, itemManager, golem);
 			overlayManager.add(overlay);
 			golemOverlays.add(overlay);
 		}

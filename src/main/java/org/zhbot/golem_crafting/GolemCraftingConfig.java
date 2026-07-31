@@ -150,13 +150,25 @@ public interface GolemCraftingConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "overlayPlinth",
+			name = "Show Sunlight Core",
+			description = "Render a sunlight core on final stage",
+			section = plinthSection,
+			position = 1
+	)
+	default boolean showOverlayPlinthCore()
+	{
+		return true;
+	}
+
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayPlinthValidColour",
 			name = "Valid Colour",
 			description = "The highlight colour for plinth when action is valid",
 			section = plinthSection,
-			position = 1
+			position = 2
 	)
 	default Color overlayPlinthValidColour()
 	{
@@ -169,7 +181,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Invalid Colour",
 			description = "The highlight colour for plinth when action is invalid",
 			section = plinthSection,
-			position = 2
+			position = 3
 	)
 	default Color overlayPlinthInvalidColour()
 	{
@@ -182,7 +194,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Valid Core Colour",
 			description = "The highlight colour for plinth when you're on the right tile to insert the core",
 			section = plinthSection,
-			position = 3
+			position = 4
 	)
 	default Color overlayPlinthValidCoreColour()
 	{
@@ -195,7 +207,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Invalid Core Colour",
 			description = "The highlight colour for plinth when you're on the wrong tile to insert the core",
 			section = plinthSection,
-			position = 4
+			position = 5
 	)
 	default Color overlayPlinthInvalidCoreColour()
 	{
