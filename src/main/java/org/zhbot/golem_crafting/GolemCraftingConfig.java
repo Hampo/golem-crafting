@@ -453,4 +453,59 @@ public interface GolemCraftingConfig extends Config
 	{
 		return new Color(255, 0, 0);
 	}
+
+	@ConfigSection(
+			name = "Game Chat",
+			description = "Configure game chat settings",
+			position = 7
+	)
+	String gameChatSection = "gameChatSection";
+
+	@ConfigItem(
+			keyName = "gameChatHideAngle",
+			name = "Hide finished angle",
+			description = "Hide the game chat message when you finish an angle",
+			section = gameChatSection,
+			position = 0
+	)
+	default boolean gameChatHideAngle()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "gameChatHideTotal",
+			name = "Hide total",
+			description = "Hide the game chat message with the total golems crafted",
+			section = gameChatSection,
+			position = 2
+	)
+	default boolean gameChatHideTotal()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "gameChatHideLoot",
+			name = "Hide loot",
+			description = "Hide the game chat message with the loot",
+			section = gameChatSection,
+			position = 3
+	)
+	default boolean gameChatHideLoot()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "gameChatHideLootExcludeChisel",
+			name = "Exclude Jeweller's Chisel",
+			description = "Exclude the Jeweller's Chisel from hiding the loot game chat message",
+			section = gameChatSection,
+			position = 4
+	)
+	default boolean gameChatHideLootExcludeChisel()
+	{
+		return true;
+	}
 }

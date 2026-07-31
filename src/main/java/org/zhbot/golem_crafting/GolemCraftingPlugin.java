@@ -13,6 +13,7 @@ import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.ItemID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.Notifier;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
@@ -20,6 +21,7 @@ import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
+import net.runelite.client.util.Text;
 
 import java.util.HashSet;
 import java.util.List;
@@ -57,8 +59,15 @@ public class GolemCraftingPlugin extends Plugin
 			/*ItemID.GOAT_PIT_FUR*/34017
 	);
 
+	private static final String FINISH_ANGLE_MESSAGE = "You finish crafting the golem from this angle.";
+	private static final Pattern TOTAL_GOLEMS_MESSAGE = Pattern.compile("You have crafted \\d+ golems on Wyrmscraig\\.");
+	private static final Pattern LOOT_MESSAGE = Pattern.compile("As you complete the golem it leaves a gift on the ground for you: (.*)\\.");
+
 	@Inject
 	private Client client;
+
+	@Inject
+	private ClientThread clientThread;
 
 	@Inject
 	private GolemCraftingConfig config;
@@ -172,10 +181,32 @@ public class GolemCraftingPlugin extends Plugin
 	{
 		if (event.getType() != ChatMessageType.GAMEMESSAGE)
 			return;
+
+		var message = Text.removeTags(event.getMessage());
+
+		var hideMessage = (config.gameChatHideAngle() && message.contains(FINISH_ANGLE_MESSAGE))
+						|| (config.gameChatHideTotal() && TOTAL_GOLEMS_MESSAGE.matcher(message).matches());
+
+		if (!hideMessage && config.gameChatHideLoot())
+		{
+			var matcher = LOOT_MESSAGE.matcher(message);
+			if (matcher.matches())
+				hideMessage = !config.gameChatHideLootExcludeChisel() || !matcher.group(1).contains("Jeweller's Chisel");
+		}
+		if (hideMessage)
+		{
+			final ChatLineBuffer lineBuffer = client.getChatLineMap().get(ChatMessageType.GAMEMESSAGE.getType());
+			if (lineBuffer == null)
+				return;
+
+			lineBuffer.removeMessageNode(event.getMessageNode());
+			clientThread.invoke(() -> client.runScript(ScriptID.BUILD_CHATBOX));
+
+			return;
+		}
+
 		if (!hasLargeFurPouch())
 			return;
-
-		var message = event.getMessage();
 
 		if (message.contains("You need to dress the golem in furs from hunted creatures.") ||
 			message.contains("Your fur pouch is empty."))
