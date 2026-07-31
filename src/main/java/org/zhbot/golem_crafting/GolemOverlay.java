@@ -149,7 +149,7 @@ public class GolemOverlay extends Overlay {
             Color color;
             if (!onValidTile)
                 color = isFinalStep ? config.overlayPlinthInvalidCoreColour() : config.overlayPlinthInvalidColour();
-            else if (progress > 0 && progress < 5 && plugin.isCrafting() && client.getVarbitValue(VarbitID.BUSY) == 0)
+            else if (config.showOverlayPlinthEfficiency() && progress > 0 && progress < 5 && plugin.isCrafting() && client.getVarbitValue(VarbitID.BUSY) == 0)
                 color = config.overlayPlinthEfficiencyColour();
             else
                 color = (isFinalStep ? config.overlayPlinthValidCoreColour() : config.overlayPlinthValidColour());

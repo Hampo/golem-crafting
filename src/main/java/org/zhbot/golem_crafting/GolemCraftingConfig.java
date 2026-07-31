@@ -163,11 +163,23 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "overlayPlinthEfficiency",
+			name = "Highlight Efficiency",
+			description = "Highlight the golem plinth in a different colour when it's efficient to click",
+			section = plinthSection,
+			position = 1
+	)
+	default boolean showOverlayPlinthEfficiency()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "overlayPlinth",
 			name = "Show Sunlight Core",
 			description = "Render a sunlight core on final stage",
 			section = plinthSection,
-			position = 1
+			position = 2
 	)
 	default boolean showOverlayPlinthCore()
 	{
@@ -180,7 +192,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Valid Colour",
 			description = "The highlight colour for plinth when action is valid",
 			section = plinthSection,
-			position = 2
+			position = 3
 	)
 	default Color overlayPlinthValidColour()
 	{
@@ -193,7 +205,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Efficiency Colour",
 			description = "The highlight colour for plinth when it's efficient to click again",
 			section = plinthSection,
-			position = 3
+			position = 4
 	)
 	default Color overlayPlinthEfficiencyColour()
 	{
@@ -206,7 +218,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Invalid Colour",
 			description = "The highlight colour for plinth when action is invalid",
 			section = plinthSection,
-			position = 4
+			position = 5
 	)
 	default Color overlayPlinthInvalidColour()
 	{
@@ -219,7 +231,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Valid Core Colour",
 			description = "The highlight colour for plinth when you're on the right tile to insert the core",
 			section = plinthSection,
-			position = 5
+			position = 6
 	)
 	default Color overlayPlinthValidCoreColour()
 	{
@@ -232,7 +244,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Invalid Core Colour",
 			description = "The highlight colour for plinth when you're on the wrong tile to insert the core",
 			section = plinthSection,
-			position = 6
+			position = 7
 	)
 	default Color overlayPlinthInvalidCoreColour()
 	{
