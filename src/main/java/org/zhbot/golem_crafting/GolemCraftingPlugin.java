@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 public class GolemCraftingPlugin extends Plugin
 {
 	private static final WorldPoint CENTER = new WorldPoint(2590, 2250, 0);
-	private static final int MAX_DISTANCE = 40;
+	private static final int MAX_DISTANCE = 15;
 
 	private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");
 	public static final Set<Integer> LARGE_FUR_POUCH_IDS = Set.of(
