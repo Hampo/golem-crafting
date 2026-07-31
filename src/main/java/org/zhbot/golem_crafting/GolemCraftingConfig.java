@@ -555,7 +555,7 @@ public interface GolemCraftingConfig extends Config
 	)
 	default boolean gameChatHideTotal()
 	{
-		return true;
+		return false;
 	}
 
 	@ConfigItem(
@@ -567,7 +567,7 @@ public interface GolemCraftingConfig extends Config
 	)
 	default boolean gameChatHideLoot()
 	{
-		return true;
+		return false;
 	}
 
 	@ConfigItem(
