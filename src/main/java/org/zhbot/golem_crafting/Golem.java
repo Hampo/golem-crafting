@@ -1,7 +1,6 @@
 package org.zhbot.golem_crafting;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.runelite.api.Client;
 import net.runelite.api.GameObject;
 import net.runelite.api.coords.LocalPoint;
@@ -19,8 +18,8 @@ public abstract class Golem {
     @Getter
     private final int progressID;
     @Getter
-    @Setter
-    private int lastProgressTick;
+    private int lastProgressTick = -RESPAWN_DELAY;
+    private boolean firstProgressTick = true;
 
     private final int northStateID;
     private final int eastStateID;
@@ -140,6 +139,22 @@ public abstract class Golem {
                 return gameObject;
 
         return null;
+    }
+
+    public void onLogin()
+    {
+        firstProgressTick = true;
+        lastProgressTick = -RESPAWN_DELAY;
+    }
+
+    public void setLastProgressTick(int tick)
+    {
+        if (firstProgressTick)
+        {
+            firstProgressTick = false;
+            return;
+        }
+        lastProgressTick = tick;
     }
 }
 

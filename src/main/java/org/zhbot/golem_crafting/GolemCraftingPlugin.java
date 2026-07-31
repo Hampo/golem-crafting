@@ -255,6 +255,13 @@ public class GolemCraftingPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
+	public void onGameStateChanged(GameStateChanged event) {
+		if (event.getGameState() == GameState.LOGGED_IN)
+			for (var golem : golems)
+				golem.onLogin();
+	}
+
 	@Provides
 	GolemCraftingConfig provideConfig(ConfigManager configManager)
 	{
