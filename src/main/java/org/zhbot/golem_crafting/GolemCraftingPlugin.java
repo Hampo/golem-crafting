@@ -68,9 +68,6 @@ public class GolemCraftingPlugin extends Plugin
 	private Client client;
 
 	@Inject
-	private ClientThread clientThread;
-
-	@Inject
 	private GolemCraftingConfig config;
 
 	@Inject ConfigManager configManager;
@@ -232,7 +229,7 @@ public class GolemCraftingPlugin extends Plugin
 				return;
 
 			lineBuffer.removeMessageNode(event.getMessageNode());
-			clientThread.invoke(() -> client.runScript(ScriptID.BUILD_CHATBOX));
+			client.refreshChat();
 
 			return;
 		}
