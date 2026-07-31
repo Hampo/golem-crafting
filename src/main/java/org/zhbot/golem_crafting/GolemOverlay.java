@@ -6,6 +6,7 @@ import net.runelite.api.Perspective;
 import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.game.ItemManager;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
@@ -72,7 +73,8 @@ public class GolemOverlay extends Overlay {
         var playerLocation = player.getWorldLocation();
         var onValidTile = false;
 
-        if (progress == 5)
+        var isFinalStep = progress == 5;
+        if (isFinalStep)
         {
             onValidTile = playerLocation.distanceTo(golem.getFinalTile()) == 0;
 
@@ -143,9 +145,26 @@ public class GolemOverlay extends Overlay {
             return null;
 
         if (config.showOverlayPlinth())
-            renderObject(graphics, station, onValidTile ? (progress == 5 ? config.overlayPlinthValidCoreColour() : config.overlayPlinthValidColour()) : (progress == 5 ? config.overlayPlinthInvalidCoreColour() : config.overlayPlinthInvalidColour()));
+        {
+            Color color;
+            if (onValidTile)
+            {
+                if (progress > 0 && progress < 5 && plugin.isCrafting() && client.getVarbitValue(VarbitID.BUSY) == 0)
+                {
+                    color = config.overlayPlinthEfficiencyColour();
+                }
+                else
+                {
+                    color = (isFinalStep ? config.overlayPlinthValidCoreColour() : config.overlayPlinthValidColour());
+                }
+            }
+            else {
+                color = isFinalStep ? config.overlayPlinthInvalidCoreColour() : config.overlayPlinthInvalidColour();
+            }
+            renderObject(graphics, station, color);
+        }
 
-        if (progress == 5 && config.showOverlayPlinthCore())
+        if (isFinalStep && config.showOverlayPlinthCore())
             renderItem(graphics, station, SUNSTONE_CORE_ID);
 
         return null;

@@ -65,6 +65,8 @@ public class GolemCraftingPlugin extends Plugin
 	private static final Pattern TOTAL_GOLEMS_MESSAGE = Pattern.compile("You have crafted \\d+ golems on Wyrmscraig\\.");
 	private static final Pattern LOOT_MESSAGE = Pattern.compile("As you complete the golem it leaves a gift on the ground for you: (\\d+) x (.*)\\.");
 
+	private static final int CRAFTING_ANIMATION_ID = 14458;
+
 	@Inject
 	private Client client;
 
@@ -402,5 +404,10 @@ public class GolemCraftingPlugin extends Plugin
 
 		var playerLocation = player.getWorldLocation();
 		return playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
+	}
+
+	public boolean isCrafting()
+	{
+		return client.getLocalPlayer().getAnimation() == CRAFTING_ANIMATION_ID;
 	}
 }

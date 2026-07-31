@@ -46,7 +46,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
 
         panelComponent.getChildren().add(TitleComponent.builder()
                 .text("Golem Crafting")
-                .color(client.getLocalPlayer().getAnimation() == 14458 ? Color.GREEN : Color.RED)
+                .color(plugin.isCrafting() ? Color.GREEN : Color.RED)
                 .build());
 
         if (config.showInfoboxTotal())

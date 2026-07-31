@@ -189,11 +189,24 @@ public interface GolemCraftingConfig extends Config
 
 	@Alpha
 	@ConfigItem(
+			keyName = "overlayPlinthEfficiencyColour",
+			name = "Efficiency Colour",
+			description = "The highlight colour for plinth when it's efficient to click again",
+			section = plinthSection,
+			position = 3
+	)
+	default Color overlayPlinthEfficiencyColour()
+	{
+		return new Color(225, 223, 0, 75);
+	}
+
+	@Alpha
+	@ConfigItem(
 			keyName = "overlayPlinthInvalidColour",
 			name = "Invalid Colour",
 			description = "The highlight colour for plinth when action is invalid",
 			section = plinthSection,
-			position = 3
+			position = 4
 	)
 	default Color overlayPlinthInvalidColour()
 	{
@@ -206,7 +219,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Valid Core Colour",
 			description = "The highlight colour for plinth when you're on the right tile to insert the core",
 			section = plinthSection,
-			position = 4
+			position = 5
 	)
 	default Color overlayPlinthValidCoreColour()
 	{
@@ -219,7 +232,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Invalid Core Colour",
 			description = "The highlight colour for plinth when you're on the wrong tile to insert the core",
 			section = plinthSection,
-			position = 5
+			position = 6
 	)
 	default Color overlayPlinthInvalidCoreColour()
 	{
