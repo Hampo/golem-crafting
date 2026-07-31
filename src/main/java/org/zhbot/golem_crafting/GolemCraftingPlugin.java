@@ -25,6 +25,7 @@ import net.runelite.client.util.Text;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
@@ -61,7 +62,7 @@ public class GolemCraftingPlugin extends Plugin
 
 	private static final String FINISH_ANGLE_MESSAGE = "You finish crafting the golem from this angle.";
 	private static final Pattern TOTAL_GOLEMS_MESSAGE = Pattern.compile("You have crafted \\d+ golems on Wyrmscraig\\.");
-	private static final Pattern LOOT_MESSAGE = Pattern.compile("As you complete the golem it leaves a gift on the ground for you: (.*)\\.");
+	private static final Pattern LOOT_MESSAGE = Pattern.compile("As you complete the golem it leaves a gift on the ground for you: (\\d+) x (.*)\\.");
 
 	@Inject
 	private Client client;
@@ -184,14 +185,45 @@ public class GolemCraftingPlugin extends Plugin
 
 		var message = Text.removeTags(event.getMessage());
 
-		var hideMessage = (config.gameChatHideAngle() && message.contains(FINISH_ANGLE_MESSAGE))
-						|| (config.gameChatHideTotal() && TOTAL_GOLEMS_MESSAGE.matcher(message).matches());
+		var hideMessage = false;
+
+		var lootMatcher = LOOT_MESSAGE.matcher(message);
+		if (lootMatcher.matches())
+		{
+			var lootAmount = Integer.parseInt(lootMatcher.group(1));
+			var loot = lootMatcher.group(2).toLowerCase(Locale.ROOT);
+
+			hideMessage = config.gameChatHideLoot() && (!config.gameChatHideLootExcludeChisel() || !loot.equalsIgnoreCase("Jeweller's Chisel"));
+
+			switch (loot)
+			{
+				case "uncut sapphire":
+					infobox.incrementSapphireCount(lootAmount);
+					break;
+				case "uncut emerald":
+					infobox.incrementEmeraldCount(lootAmount);
+					break;
+				case "uncut ruby":
+					infobox.incrementRubyCount(lootAmount);
+					break;
+				case "uncut diamond":
+					infobox.incrementDiamondCount(lootAmount);
+					break;
+				case "jeweller's chisel":
+					infobox.incrementJewellersChiselCount(lootAmount);
+					break;
+			}
+		}
+
+		hideMessage = hideMessage ||
+						(config.gameChatHideAngle() && message.contains(FINISH_ANGLE_MESSAGE)) ||
+						(config.gameChatHideTotal() && TOTAL_GOLEMS_MESSAGE.matcher(message).matches());
 
 		if (!hideMessage && config.gameChatHideLoot())
 		{
 			var matcher = LOOT_MESSAGE.matcher(message);
 			if (matcher.matches())
-				hideMessage = !config.gameChatHideLootExcludeChisel() || !matcher.group(1).contains("Jeweller's Chisel");
+				hideMessage = !config.gameChatHideLootExcludeChisel() || !matcher.group(1).toLowerCase(Locale.ROOT).contains("jeweller's chisel");
 		}
 		if (hideMessage)
 		{
