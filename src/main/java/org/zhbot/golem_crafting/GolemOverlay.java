@@ -94,8 +94,8 @@ public class GolemOverlay extends Overlay {
                 if (config.showOverlayTiles())
                     renderTile(graphics, golem.getNorthTile(), config.overlayTileColour());
 
-                if (config.showOverlayTileProgress())
-                    renderPie(graphics, golem.getNorthTile(), golem.getNorthProgress(client), Color.ORANGE);
+                if (config.showProgressMode().isShowTiles())
+                    renderPie(graphics, golem.getNorthTile(), golem.getNorthProgress(client), config.overlayProgressColour());
             }
             else if (config.showOverlayCompleteTiles())
             {
@@ -113,8 +113,8 @@ public class GolemOverlay extends Overlay {
                 if (config.showOverlayTiles())
                     renderTile(graphics, golem.getEastTile(), config.overlayTileColour());
 
-                if (config.showOverlayTileProgress())
-                    renderPie(graphics, golem.getEastTile(), golem.getEastProgress(client), Color.ORANGE);
+                if (config.showProgressMode().isShowTiles())
+                    renderPie(graphics, golem.getEastTile(), golem.getEastProgress(client), config.overlayProgressColour());
             }
             else if (config.showOverlayCompleteTiles())
             {
@@ -132,8 +132,8 @@ public class GolemOverlay extends Overlay {
                 if (config.showOverlayTiles())
                     renderTile(graphics, golem.getSouthTile(), config.overlayTileColour());
 
-                if (config.showOverlayTileProgress())
-                    renderPie(graphics, golem.getSouthTile(), golem.getSouthProgress(client), Color.ORANGE);
+                if (config.showProgressMode().isShowTiles())
+                    renderPie(graphics, golem.getSouthTile(), golem.getSouthProgress(client), config.overlayProgressColour());
             }
             else if (config.showOverlayCompleteTiles())
             {
@@ -151,8 +151,8 @@ public class GolemOverlay extends Overlay {
                 if (config.showOverlayTiles())
                     renderTile(graphics, golem.getWestTile(), config.overlayTileColour());
 
-                if (config.showOverlayTileProgress())
-                    renderPie(graphics, golem.getWestTile(), golem.getWestProgress(client), Color.ORANGE);
+                if (config.showProgressMode().isShowTiles())
+                    renderPie(graphics, golem.getWestTile(), golem.getWestProgress(client), config.overlayProgressColour());
             }
             else if (config.showOverlayCompleteTiles())
             {
@@ -178,7 +178,7 @@ public class GolemOverlay extends Overlay {
 
         if (isFinalStep && config.showOverlayPlinthCore())
             renderItem(graphics, station, SUNSTONE_CORE_ID);
-        else if (!isFinalStep && currentSide != CardinalDirection.NONE && config.showOverlayPlinthProgress())
+        else if (!isFinalStep && currentSide != CardinalDirection.NONE && config.showProgressMode().isShowPlinth())
         {
             var currentProgress = 0f;
             switch (currentSide)
@@ -197,7 +197,7 @@ public class GolemOverlay extends Overlay {
                     break;
             }
 
-            renderPie(graphics, station, currentProgress, Color.ORANGE);
+            renderPie(graphics, station, currentProgress, config.overlayProgressColour());
         }
 
 

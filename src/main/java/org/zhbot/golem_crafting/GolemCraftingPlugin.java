@@ -223,7 +223,7 @@ public class GolemCraftingPlugin extends Plugin
 						(config.gameChatHideAngle() && message.contains(FINISH_ANGLE_MESSAGE)) ||
 						(config.gameChatHideRepeatedAngle() && message.contains(REPEATED_ANGLE_MESSAGE)) ||
 						(config.gameChatHideTotal() && TOTAL_GOLEMS_MESSAGE.matcher(message).matches());
-		
+
 		if (hideMessage)
 		{
 			final ChatLineBuffer lineBuffer = client.getChatLineMap().get(ChatMessageType.GAMEMESSAGE.getType());

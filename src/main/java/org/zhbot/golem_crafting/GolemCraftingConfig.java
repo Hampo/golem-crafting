@@ -175,18 +175,6 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "overlayPlinthProgress",
-			name = "Show Current Progress",
-			description = "Show progress of current side",
-			section = plinthSection,
-			position = 2
-	)
-	default boolean showOverlayPlinthProgress()
-	{
-		return true;
-	}
-
-	@ConfigItem(
 			keyName = "overlayPlinthCore",
 			name = "Show Sunlight Core",
 			description = "Render a sunlight core on final stage",
@@ -332,22 +320,42 @@ public interface GolemCraftingConfig extends Config
 		return Color.RED;
 	}
 
-	@ConfigItem(
-			keyName = "overlayTileProgress",
-			name = "Show Tile Progress",
-			description = "Shows progress of each side on the tile",
-			section = tilesSection,
+	@ConfigSection(
+			name = "Progress",
+			description = "Configure progress settings",
 			position = 4
 	)
-	default boolean showOverlayTileProgress()
+	String progressSection = "progressSection";
+
+	@ConfigItem(
+			keyName = "progressMode",
+			name = "Show Progress",
+			description = "Where to show progress of each side",
+			section = progressSection,
+			position = 0
+	)
+	default ProgressMode showProgressMode()
 	{
-		return true;
+		return ProgressMode.BOTH;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "overlayProgressColour",
+			name = "Colour",
+			description = "The highlight colour for progress",
+			section = progressSection,
+			position = 1
+	)
+	default Color overlayProgressColour()
+	{
+		return Color.ORANGE;
 	}
 
 	@ConfigSection(
 			name = "Sunstone",
 			description = "Configure sunstone settings",
-			position = 4
+			position = 5
 	)
 	String sunstoneSection = "sunstoneSection";
 
@@ -379,7 +387,7 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Fur Pouch",
 			description = "Configure fur pouch settings",
-			position = 5
+			position = 6
 	)
 	String furPouchSection = "furPouchSection";
 
