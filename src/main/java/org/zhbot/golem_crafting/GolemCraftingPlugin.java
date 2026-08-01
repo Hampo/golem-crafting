@@ -93,6 +93,9 @@ public class GolemCraftingPlugin extends Plugin
 	@Inject
 	private GolemCraftingInfobox infobox;
 
+	@Inject
+	private ResourceWarningInfobox resourceWarningInfobox;
+
 	@Getter
 	private final List<Golem> golems = List.of(new NorthGolem(), new SouthGolem());
 	private final Set<GolemOverlay> golemOverlays = new HashSet<>();
@@ -122,6 +125,22 @@ public class GolemCraftingPlugin extends Plugin
 
 		configManager.setConfiguration(GolemCraftingConfig.group, FUR_POUCH_KEY + "_" + accountHash, value);
 	}
+	public int getFurCount()
+	{
+		var inventory = client.getItemContainer(InventoryID.INV);
+		if (inventory == null)
+			return 0;
+
+		var furCount = hasLargeFurPouch() ? getFurPouchCount() : 0;
+		if (furCount == -1)
+			furCount = 0;
+
+		for (var item : inventory.getItems())
+			if (FUR_ITEM_IDS.contains(item.getId()))
+				furCount++;
+
+		return furCount;
+	}
 
 	@Override
 	protected void startUp() throws Exception
@@ -144,6 +163,7 @@ public class GolemCraftingPlugin extends Plugin
 		overlayManager.remove(furPouchOverlay);
 		overlayManager.remove(sunstoneOverlay);
 		overlayManager.remove(infobox);
+		overlayManager.remove(resourceWarningInfobox);
 	}
 
 	@Subscribe
@@ -159,6 +179,11 @@ public class GolemCraftingPlugin extends Plugin
 			overlayManager.add(infobox);
 		else
 			overlayManager.remove(infobox);
+
+		if (config.resourceInfoboxEnabled())
+			overlayManager.add(resourceWarningInfobox);
+		else
+			overlayManager.remove(resourceWarningInfobox);
 
 		if(config.showOverlayFurPouch() || config.showOverlayFurPouchCount())
 			overlayManager.add(furPouchOverlay);
@@ -390,7 +415,7 @@ public class GolemCraftingPlugin extends Plugin
 		if (inventory.count(34020/*Sunstone*/) < 4)
 			return false;
 
-		if (hasLargeFurPouch() && getFurPouchCount() == 0)
+		if (getFurCount() == 0)
 			return false;
 
 		return true;

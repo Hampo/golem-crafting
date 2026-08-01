@@ -1,7 +1,5 @@
 package org.zhbot.golem_crafting;
 
-import lombok.Getter;
-import lombok.Setter;
 import net.runelite.api.Client;
 import net.runelite.api.ItemContainer;
 import net.runelite.api.gameval.InventoryID;

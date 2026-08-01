@@ -156,9 +156,139 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigSection(
+			name = "Resource Warning Infobox",
+			description = "Configure the resource warning settings",
+			position = 2
+	)
+	String resourceWarningSection = "resourceWarningSection";
+
+	@ConfigItem(
+			keyName = "resourceInfoboxEnabled",
+			name = "Enabled",
+			description = "Enable the resource warning infobox",
+			section = resourceWarningSection,
+			position = 0
+	)
+	default boolean resourceInfoboxEnabled()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "resourceInfoboxFlash",
+			name = "Flash on Empty",
+			description = "Enable the resource warning infobox flashing when empty",
+			section = resourceWarningSection,
+			position = 1
+	)
+	default boolean resourceInfoboxFlash()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "resourceInfoboxWarnFur",
+			name = "Warn on Fur",
+			description = "Enable the resource warning infobox fur warning",
+			section = resourceWarningSection,
+			position = 2
+	)
+	default boolean resourceInfoboxWarnFur()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "resourceInfoboxFurThreshold",
+			name = "Fur Threshold",
+			description = "The low threshold for fur. Set to 0 to only warn on empty.",
+			section = resourceWarningSection,
+			position = 3
+	)
+	default int resourceInfoboxFurThreshold()
+	{
+		return 5;
+	}
+
+	@ConfigItem(
+			keyName = "resourceInfoboxWarnSunstone",
+			name = "Warn on Sunstone",
+			description = "Enable the resource warning infobox sunstone warning",
+			section = resourceWarningSection,
+			position = 4
+	)
+	default boolean resourceInfoboxWarnSunstone()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "resourceInfoboxSunstoneThreshold",
+			name = "Sunstone Threshold",
+			description = "The low threshold for sunstone. Set to 0 to only warn on empty.",
+			section = resourceWarningSection,
+			position = 5
+	)
+	default int resourceInfoboxSunstoneThreshold()
+	{
+		return 4;
+	}
+
+	@ConfigItem(
+			keyName = "resourceInfoboxCoreThreshold",
+			name = "Core Threshold",
+			description = "The low threshold for sunstone core. Set to 0 to only warn on empty.",
+			section = resourceWarningSection,
+			position = 6
+	)
+	default int resourceInfoboxCoreThreshold()
+	{
+		return 1;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "resourceInfoboxLowColour",
+			name = "Low Colour",
+			description = "The infobox colour for when resources are low",
+			section = resourceWarningSection,
+			position = 7
+	)
+	default Color resourceInfoboxLowColour()
+	{
+		return new Color(255, 121, 0, 90);
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "resourceInfoboxEmptyColour1",
+			name = "Empty Colour 1",
+			description = "The infobox colour for when resources are empty",
+			section = resourceWarningSection,
+			position = 8
+	)
+	default Color resourceInfoboxEmptyColour1()
+	{
+		return new Color(255, 0, 0, 90);
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "resourceInfoboxEmptyColour2",
+			name = "Empty Colour 2",
+			description = "The second infobox colour for when resources are empty",
+			section = resourceWarningSection,
+			position = 9
+	)
+	default Color resourceInfoboxEmptyColour2()
+	{
+		return new Color(128, 128, 128, 90);
+	}
+
+	@ConfigSection(
 			name = "Plinth",
 			description = "Configure the plinth settings",
-			position = 2
+			position = 3
 	)
 	String plinthSection = "plinthSection";
 
@@ -287,7 +417,7 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Tiles",
 			description = "Configure tiles settings",
-			position = 3
+			position = 4
 	)
 	String tilesSection = "tilesSection";
 
@@ -344,7 +474,7 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Progress",
 			description = "Configure progress settings",
-			position = 4
+			position = 5
 	)
 	String progressSection = "progressSection";
 
@@ -376,7 +506,7 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Sunstone",
 			description = "Configure sunstone settings",
-			position = 5
+			position = 6
 	)
 	String sunstoneSection = "sunstoneSection";
 
@@ -442,7 +572,7 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Fur Pouch",
 			description = "Configure fur pouch settings",
-			position = 6
+			position = 7
 	)
 	String furPouchSection = "furPouchSection";
 
@@ -463,7 +593,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Highlight Inventory",
 			description = "Highlight the fur pouch in inventory",
 			section = furPouchSection,
-			position = 0
+			position = 1
 	)
 	default boolean showOverlayFurPouch()
 	{
@@ -475,7 +605,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Default Colour",
 			description = "The default highlight colour for the fur pouch",
 			section = furPouchSection,
-			position = 1
+			position = 2
 	)
 	default Color overlayFurPouchColour()
 	{
@@ -487,7 +617,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Low Colour",
 			description = "The highlight colour for when the fur pouch contents are low",
 			section = furPouchSection,
-			position = 2
+			position = 3
 	)
 	default Color overlayFurPouchLowColour()
 	{
@@ -499,7 +629,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Empty Colour",
 			description = "The highlight colour for when the fur pouch is empty",
 			section = furPouchSection,
-			position = 3
+			position = 4
 	)
 	default Color overlayFurPouchEmptyColour()
 	{
@@ -511,7 +641,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Unknown Colour",
 			description = "The highlight colour for when the fur pouch contents are unknown",
 			section = furPouchSection,
-			position = 4
+			position = 5
 	)
 	default Color overlayFurPouchUnknownColour()
 	{
@@ -523,7 +653,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Show Count",
 			description = "Renders the count of furs in the pouch",
 			section = furPouchSection,
-			position = 5
+			position = 6
 	)
 	default boolean showOverlayFurPouchCount()
 	{
@@ -535,7 +665,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Default Text Colour",
 			description = "The default text colour for the fur pouch",
 			section = furPouchSection,
-			position = 6
+			position = 7
 	)
 	default Color overlayFurPouchTextColour()
 	{
@@ -547,7 +677,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Unknown Text Colour",
 			description = "The text colour for when the fur pouch contents are unknown",
 			section = furPouchSection,
-			position = 7
+			position = 8
 	)
 	default Color overlayFurPouchUnknownTextColour()
 	{
@@ -559,7 +689,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Low Text Colour",
 			description = "The text colour for when the fur pouch contents are low",
 			section = furPouchSection,
-			position = 8
+			position = 9
 	)
 	default Color overlayFurPouchLowTextColour()
 	{
@@ -571,7 +701,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Empty Text Colour",
 			description = "The text colour for when the fur pouch is empty",
 			section = furPouchSection,
-			position = 16
+			position = 10
 	)
 	default Color overlayFurPouchEmptyTextColour()
 	{
@@ -581,7 +711,7 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Game Chat",
 			description = "Configure game chat settings",
-			position = 7
+			position = 8
 	)
 	String gameChatSection = "gameChatSection";
 
