@@ -11,6 +11,7 @@ import net.runelite.api.events.*;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.ItemID;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.api.widgets.Widget;
 import net.runelite.client.Notifier;
 import net.runelite.client.callback.ClientThread;
@@ -107,6 +108,9 @@ public class GolemCraftingPlugin extends Plugin
 	private boolean miningSunstoneRock = false;
 	private int lastSunstoneMinedTick = -MOMENTUM_TICKS;
 
+	@Getter
+	private int lastBusyTick;
+
 	private static final String FUR_POUCH_KEY = "furPouchCount";
 	public int getFurPouchCount()
 	{
@@ -200,6 +204,13 @@ public class GolemCraftingPlugin extends Plugin
 	public void onVarbitChanged(VarbitChanged event)
 	{
 		var varbitId = event.getVarbitId();
+
+		if (varbitId == VarbitID.BUSY)
+		{
+			lastBusyTick = client.getTickCount();
+			return;
+		}
+
 		for (var golem : golems)
 		{
 			if (varbitId == golem.getProgressID())
