@@ -96,11 +96,23 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "infoboxSunStoneMomentum",
+			name = "Show sunstone momentum",
+			description = "Show sunstone momentum",
+			section = infoboxSection,
+			position = 5
+	)
+	default boolean showInfoboxSunStoneMomentum()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "infoboxLoot",
 			name = "Show loot",
 			description = "Show loot counts",
 			section = infoboxSection,
-			position = 5
+			position = 6
 	)
 	default boolean showInfoboxLoot()
 	{
@@ -112,7 +124,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Unknown Text Colour",
 			description = "The text colour for when the fur pouch contents are unknown",
 			section = infoboxSection,
-			position = 6
+			position = 7
 	)
 	default Color infoboxFurPouchUnknownTextColour()
 	{
@@ -124,7 +136,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Low Text Colour",
 			description = "The text colour for when the fur pouch contents are low",
 			section = infoboxSection,
-			position = 7
+			position = 8
 	)
 	default Color infoboxFurPouchLowTextColour()
 	{
@@ -136,7 +148,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Empty Text Colour",
 			description = "The text colour for when the fur pouch is empty",
 			section = infoboxSection,
-			position = 8
+			position = 9
 	)
 	default Color infoboxFurPouchEmptyTextColour()
 	{
@@ -389,17 +401,42 @@ public interface GolemCraftingConfig extends Config
 	)
 	default RenderMode overlaySunstoneRenderStyle() { return RenderMode.CLICKBOX; }
 
+	@ConfigItem(
+			keyName = "overlaySunstoneMomentum",
+			name = "Show Momentum",
+			description = "Show sunstone momentum",
+			section = sunstoneSection,
+			position = 2
+	)
+	default boolean overlaySunstoneMomentum()
+	{
+		return true;
+	}
+
 	@Alpha
 	@ConfigItem(
 			keyName = "overlaySunstoneColour",
 			name = "Sunstone Colour",
 			description = "The highlight colour for sunstones",
 			section = sunstoneSection,
-			position = 2
+			position = 3
 	)
 	default Color overlaySunstoneColour()
 	{
 		return new Color(0, 255, 0, 75);
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "overlaySunstoneMomentumColour",
+			name = "Momentum Colour",
+			description = "The colour for sunstone momentum",
+			section = sunstoneSection,
+			position = 4
+	)
+	default Color overlaySunstoneMomentumColour()
+	{
+		return new Color(255, 0, 0, 75);
 	}
 
 	@ConfigSection(

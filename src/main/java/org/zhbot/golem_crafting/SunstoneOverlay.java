@@ -49,6 +49,9 @@ public class SunstoneOverlay extends Overlay {
         var scene = worldView.getScene();
         var tiles = scene.getTiles()[0];
 
+        var localPlayer = client.getLocalPlayer();
+        var playerLocation = localPlayer.getWorldLocation();
+
         for (var xTiles : tiles) {
             for (var tile : xTiles) {
                 if (tile == null)
@@ -70,7 +73,7 @@ public class SunstoneOverlay extends Overlay {
                     }
 
                     if (sunstoneMode == SunstoneMode.ROCKS && SUNSTONE_ROCK_IDS.contains(gameObject.getId()))
-                        renderObject(graphics, gameObject, config.overlaySunstoneRenderStyle(), config.overlaySunstoneColour());
+                        renderObject(graphics, gameObject, config.overlaySunstoneRenderStyle(), (config.overlaySunstoneMomentum() && plugin.hasMomentum()) ? config.overlaySunstoneMomentumColour() : config.overlaySunstoneColour());
                 }
             }
         }

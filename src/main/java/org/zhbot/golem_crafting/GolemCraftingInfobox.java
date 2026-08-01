@@ -103,6 +103,16 @@ public class GolemCraftingInfobox extends OverlayPanel {
             }
         }
 
+        if (config.showInfoboxSunStoneMomentum())
+        {
+            var ticks = plugin.getMomentumTicks();
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Momentum:")
+                    .right(String.valueOf(ticks))
+                    .rightColor(ticks > 0 ? Color.GREEN : Color.RED)
+                    .build());
+        }
+
         if (config.showInfoboxLoot())
         {
             panelComponent.getChildren().add(TitleComponent.builder()

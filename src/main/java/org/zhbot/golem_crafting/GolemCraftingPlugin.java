@@ -97,6 +97,13 @@ public class GolemCraftingPlugin extends Plugin
 	private final List<Golem> golems = List.of(new NorthGolem(), new SouthGolem());
 	private final Set<GolemOverlay> golemOverlays = new HashSet<>();
 
+	private static final String MINING_ROCK_MESSAGE = "You swing your pick at the rock.";
+	private static final String MINING_MONOLITH_MESSAGE = "You swing your pick at the monolith.";
+	private static final String MINED_SUNSTONE_MESSAGE = "You manage to mine some sunstone.";
+	private static final int MOMENTUM_TICKS = 5;
+	private boolean miningSunstoneRock = false;
+	private int lastSunstoneMinedTick = -MOMENTUM_TICKS;
+
 	private static final String FUR_POUCH_KEY = "furPouchCount";
 	public int getFurPouchCount()
 	{
@@ -184,6 +191,29 @@ public class GolemCraftingPlugin extends Plugin
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
+		if (event.getType() == ChatMessageType.SPAM)
+		{
+			var message = Text.removeTags(event.getMessage());
+
+			if (message.contains(MINING_MONOLITH_MESSAGE))
+			{
+				miningSunstoneRock = false;
+				return;
+			}
+
+			if (message.contains(MINING_ROCK_MESSAGE))
+			{
+				miningSunstoneRock = true;
+				return;
+			}
+
+			if (miningSunstoneRock && message.contains(MINED_SUNSTONE_MESSAGE))
+			{
+				lastSunstoneMinedTick = client.getTickCount();
+				return;
+			}
+		}
+
 		if (event.getType() != ChatMessageType.GAMEMESSAGE)
 			return;
 
@@ -326,6 +356,7 @@ public class GolemCraftingPlugin extends Plugin
 		if (event.getGameState() == GameState.LOGGED_IN)
 			for (var golem : golems)
 				golem.onLogin();
+		lastSunstoneMinedTick = -MOMENTUM_TICKS;
 	}
 
 	@Provides
@@ -407,5 +438,17 @@ public class GolemCraftingPlugin extends Plugin
 	public boolean isCrafting()
 	{
 		return client.getLocalPlayer().getAnimation() == CRAFTING_ANIMATION_ID;
+	}
+
+	public boolean hasMomentum()
+	{
+		var ticksSinceMined = client.getTickCount() - lastSunstoneMinedTick;
+		return ticksSinceMined < MOMENTUM_TICKS;
+	}
+
+	public int getMomentumTicks()
+	{
+		var momentumTicks = lastSunstoneMinedTick + MOMENTUM_TICKS - client.getTickCount();
+		return Math.max(momentumTicks, 0);
 	}
 }
