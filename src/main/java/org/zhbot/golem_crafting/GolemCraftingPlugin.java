@@ -311,6 +311,26 @@ public class GolemCraftingPlugin extends Plugin
 	@Subscribe
 	public void onMenuOptionClicked(MenuOptionClicked event)
 	{
+		if (event.getMenuAction() == MenuAction.GAME_OBJECT_FIRST_OPTION && event.getMenuOption().equalsIgnoreCase("Shape-golem"))
+		{
+			var sceneX = event.getParam0();
+			var sceneY = event.getParam1();
+
+			var worldView = client.getTopLevelWorldView();
+			var worldPoint = WorldPoint.fromScene(worldView.getScene(), sceneX, sceneY, worldView.getPlane());
+
+			for (var golem : golems)
+			{
+				if (golem.getGolemTile().distanceTo(worldPoint) == 0)
+				{
+					golem.setLastShapeClickTick(client.getTickCount());
+					return;
+				}
+			}
+
+			return;
+		}
+
 		if (event.getMenuAction() == MenuAction.WIDGET_TARGET_ON_WIDGET)
 		{
 			var selectedWidget = client.getSelectedWidget();

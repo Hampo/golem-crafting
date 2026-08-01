@@ -69,20 +69,7 @@ public class ResourceWarningInfobox extends OverlayPanel {
 
         if (config.resourceInfoboxWarnSunstone())
         {
-            var sunstoneCount = 0;
-            var sunstoneCoreCount = 0;
-            for (var item : inventory.getItems())
-            {
-                switch (item.getId())
-                {
-                    case SUNSTONE_ID:
-                        sunstoneCount++;
-                        break;
-                    case SUNSTONE_CORE_ID:
-                        sunstoneCoreCount++;
-                        break;
-                }
-            }
+            var sunstoneCount = inventory.count(SUNSTONE_ID);
 
             if (sunstoneCount == 0)
             {
@@ -100,6 +87,11 @@ public class ResourceWarningInfobox extends OverlayPanel {
                         .build());
                 low = true;
             }
+        }
+
+        if (config.resourceInfoboxWarnSunstoneCore())
+        {
+            var sunstoneCoreCount = inventory.count(SUNSTONE_CORE_ID);
 
             if (sunstoneCoreCount == 0)
             {
