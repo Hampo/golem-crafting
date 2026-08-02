@@ -123,7 +123,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
         if (config.showInfoboxLoot())
         {
             panelComponent.getChildren().add(TitleComponent.builder()
-                    .text("Loot")
+                    .text("Session Loot")
                     .color(Color.GREEN)
                     .build());
 
