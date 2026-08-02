@@ -35,7 +35,7 @@ public class FurPouchOverlay extends WidgetItemOverlay {
         if (bounds == null || bounds.width <= 0 || bounds.height <= 0)
             return;
 
-        if (!plugin.isWithinGolemArea())
+        if (!config.showFurPouchAlways() && !plugin.isWithinGolemArea())
             return;
 
         var furPouch = plugin.getFurPouch();
