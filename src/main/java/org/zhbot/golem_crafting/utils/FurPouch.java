@@ -23,6 +23,7 @@ import java.util.regex.Pattern;
 // TODO:
 // - Support Empty Storage Containers in bank/deposit box
 // - Support Empty in deposit box
+// - Handle tattered fur
 public class FurPouch {
     private static final Set<Integer> CLOSED_POUCH_IDS = Set.of(
             ItemID.HG_FURPOUCH_SMALL,
