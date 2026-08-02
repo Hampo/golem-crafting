@@ -85,6 +85,7 @@ public class FurPouch {
             "You've caught a sabre-toothed kyatt!",
             "You've caught a sabretoothed kyatt!",
             "You've caught a sunlight antelope!",
+            "You've caught a moonlight antelope!",
             "You retrieve the falcon as well as the fur of the dead kebbit."
     );
 
