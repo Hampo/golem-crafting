@@ -789,4 +789,23 @@ public interface GolemCraftingConfig extends Config
 	{
 		return true;
 	}
+
+	@ConfigSection(
+			name = "Debug",
+			description = "Debug settings",
+			position = 9
+	)
+	String debugSection = "debugSection";
+
+	@ConfigItem(
+			keyName = "debug",
+			name = "Debug",
+			description = "Debug",
+			section = debugSection,
+			position = 0
+	)
+	default boolean debug()
+	{
+		return false;
+	}
 }
