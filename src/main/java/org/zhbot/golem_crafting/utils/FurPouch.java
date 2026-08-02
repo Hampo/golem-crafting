@@ -1,13 +1,9 @@
 package org.zhbot.golem_crafting.utils;
 
 import com.google.common.collect.Sets;
-import net.runelite.api.ChatMessageType;
-import net.runelite.api.Client;
-import net.runelite.api.ItemContainer;
-import net.runelite.api.MenuAction;
-import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.*;
+import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.*;
 import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.ItemID;
@@ -20,9 +16,13 @@ import org.zhbot.golem_crafting.GolemCraftingPlugin;
 import org.zhbot.golem_crafting.enums.FurPouchType;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+// TODO:
+// - Support Empty Storage Containers in bank/deposit box
+// - Support Empty in deposit box
 public class FurPouch {
     private static final Set<Integer> CLOSED_POUCH_IDS = Set.of(
             ItemID.HG_FURPOUCH_SMALL,
@@ -69,6 +69,23 @@ public class FurPouch {
     );
 
     private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");
+    private static final List<String> FUR_POUCH_EMPTY_MESSAGES = List.of(
+            "You need to dress the golem in furs from hunted creatures.",
+            "Your fur pouch is empty."
+    );
+    private static final List<String> CAUGHT_CREATURE_MESSAGES = List.of(
+            "You manage to noose a polar kebbit that is hiding in the snowdrift.",
+            "You manage to noose a common kebbit that is hiding in the bush.",
+            "You manage to noose a Feldip weasel that is hiding in the bush.",
+            "You manage to noose a desert devil that is hiding in the sand.",
+            "You've caught a pyre fox.",
+            "You've caught a spined larupia!",
+            "You've caught a horned graahk!",
+            "You've caught a sabre-toothed kyatt!",
+            "You've caught a sabretoothed kyatt!",
+            "You've caught a sunlight antelope!",
+            "You retrieve the falcon as well as the fur of the dead kebbit."
+    );
 
     private final Client client;
     private final ConfigManager configManager;
@@ -80,6 +97,9 @@ public class FurPouch {
         this.client = client;
         this.configManager = configManager;
         this.plugin = plugin;
+
+        if (client.getGameState() == GameState.LOGGED_IN)
+            hunterXP = client.getSkillExperience(Skill.HUNTER);
     }
 
     public boolean hasClosedFurPouch()
@@ -191,7 +211,7 @@ public class FurPouch {
     @Subscribe
     private void onChatMessage(ChatMessage event)
     {
-        if (event.getType() != ChatMessageType.GAMEMESSAGE)
+        if (event.getType() != ChatMessageType.GAMEMESSAGE && event.getType() != ChatMessageType.SPAM)
             return;
 
         if (!hasFurPouch())
@@ -199,18 +219,33 @@ public class FurPouch {
 
         var message = Text.removeTags(event.getMessage());
 
-        if (message.contains("You need to dress the golem in furs from hunted creatures.") ||
-                message.contains("Your fur pouch is empty."))
+        var matcher = FUR_POUCH_PATTERN.matcher(message);
+        if (matcher.find())
         {
+            setCount(Integer.parseInt(matcher.group(1)));
+            return;
+        }
+
+        for (var emptyMessage : FUR_POUCH_EMPTY_MESSAGES)
+        {
+            if (!message.contains(emptyMessage))
+                continue;
+
             setCount(0);
             return;
         }
 
-        var matcher = FUR_POUCH_PATTERN.matcher(message);
-        if (!matcher.find())
+        if (!hasOpenFurPouch() || getCount() == -1)
             return;
 
-        setCount(Integer.parseInt(matcher.group(1)));
+        for (var caughtMessage : CAUGHT_CREATURE_MESSAGES)
+        {
+            if (!message.contains(caughtMessage))
+                continue;
+
+            setCount(Math.min(getCount() + 1, getCapacity()));
+            return;
+        }
     }
 
     @Subscribe
@@ -279,6 +314,73 @@ public class FurPouch {
                 setCount(0);
                 break;
         }
+    }
+
+    private static final WorldPoint GOAT_PIT_TILE = new WorldPoint(2572, 2195, 0);
+    private static final int GOAT_PIT_RANGE = 2;
+    private static final int GOAT_PIT_MIN_XP = 100;
+    private static final int GOAT_PIT_MAX_XP = 179;
+
+    private int hunterXP = -1;
+    private int goatHornCount = 0;
+
+    @Subscribe
+    private void onGameStateChanged(GameStateChanged event)
+    {
+        if (event.getGameState() != GameState.LOGGED_IN)
+            return;
+
+        hunterXP = client.getSkillExperience(Skill.HUNTER);
+    }
+
+    @Subscribe
+    private void onStatChanged(StatChanged event)
+    {
+        var skill = event.getSkill();
+        if (skill != Skill.HUNTER)
+            return;
+
+        var xp = event.getXp();
+        if (hunterXP == -1)
+        {
+            hunterXP = xp;
+            return;
+        }
+
+        var xpGained = xp - hunterXP;
+        hunterXP = xp;
+
+        if (!hasOpenFurPouch() || getCount() == -1)
+            return;
+
+        if (xpGained < GOAT_PIT_MIN_XP || xpGained > GOAT_PIT_MAX_XP)
+            return;
+
+        var localPlayer = client.getLocalPlayer();
+        if (localPlayer == null)
+            return;
+
+        if (localPlayer.getWorldLocation().distanceTo(GOAT_PIT_TILE) > GOAT_PIT_RANGE)
+            return;
+
+        var inventory = client.getItemContainer(InventoryID.INV);
+        if (inventory == null)
+            return;
+
+        var newGoatHornCount = inventory.count(ItemID.DESERT_GOAT_HORN);
+        if (goatHornCount != newGoatHornCount)
+            return;
+
+        setCount(Math.min(getCount() + 1, getCapacity()));
+    }
+
+    @Subscribe
+    private void onItemContainerChanged(ItemContainerChanged event)
+    {
+        if (event.getContainerId() != InventoryID.INV)
+            return;
+
+        goatHornCount = event.getItemContainer().count(ItemID.DESERT_GOAT_HORN);
     }
 
     public boolean isBankOpen()
