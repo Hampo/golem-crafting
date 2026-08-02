@@ -199,7 +199,7 @@ public class FurPouch {
             return;
 
         var furPouchCount = getCount();
-        if (furPouchCount == 0)
+        if (furPouchCount == 0 || furPouchCount == -1)
             return;
 
         var varbitId = event.getVarbitId();
