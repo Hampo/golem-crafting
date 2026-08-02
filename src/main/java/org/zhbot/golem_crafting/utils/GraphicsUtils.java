@@ -51,7 +51,8 @@ public class GraphicsUtils {
         var area = renderMode == RenderMode.CLICKBOX ? gameObject.getClickbox() : gameObject.getConvexHull();
         var mousePosition = client.getMouseCanvasPosition();
 
-        OverlayUtil.renderHoverableArea(graphics, area, mousePosition, color, color, color.darker());
+        var borderColour = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
+        OverlayUtil.renderHoverableArea(graphics, area, mousePosition, color, borderColour, borderColour.darker());
     }
 
     public void renderPie(Graphics2D graphics, WorldPoint worldPoint, float progress, Color color)
