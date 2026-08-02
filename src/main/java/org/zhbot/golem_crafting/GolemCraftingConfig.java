@@ -1,6 +1,9 @@
 package org.zhbot.golem_crafting;
 
 import net.runelite.client.config.*;
+import org.zhbot.golem_crafting.enums.ProgressMode;
+import org.zhbot.golem_crafting.enums.RenderMode;
+import org.zhbot.golem_crafting.enums.SunstoneMode;
 
 import java.awt.*;
 

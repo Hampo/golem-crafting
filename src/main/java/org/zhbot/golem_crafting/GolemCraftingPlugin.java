@@ -8,14 +8,12 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
-import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.ItemID;
 import net.runelite.api.gameval.VarbitID;
-import net.runelite.api.widgets.Widget;
 import net.runelite.client.Notifier;
-import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
+import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.game.ItemManager;
@@ -23,11 +21,15 @@ import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
 import net.runelite.client.util.Text;
+import org.zhbot.golem_crafting.enums.SunstoneMode;
+import org.zhbot.golem_crafting.golems.Golem;
+import org.zhbot.golem_crafting.golems.NorthGolem;
+import org.zhbot.golem_crafting.golems.SouthGolem;
+import org.zhbot.golem_crafting.overlays.*;
+import org.zhbot.golem_crafting.utils.FurPouch;
+import org.zhbot.golem_crafting.utils.GraphicsUtils;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @Slf4j
@@ -39,32 +41,10 @@ public class GolemCraftingPlugin extends Plugin
 	private static final WorldPoint CENTER = new WorldPoint(2590, 2250, 0);
 	private static final int MAX_DISTANCE = 15;
 
-	private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");
-	public static final Set<Integer> LARGE_FUR_POUCH_IDS = Set.of(
-			ItemID.HG_FURPOUCH_LARGE,
-			ItemID.HG_FURPOUCH_LARGE_OPEN
-	);
-	private static final Set<Integer> FUR_ITEM_IDS = Set.of(
-			ItemID.HUNTINGBEAST_POLAR_FUR,
-			ItemID.HUNTINGBEAST_WOODLAND_FUR,
-			ItemID.HUNTINGBEAST_JUNGLE_FUR,
-			ItemID.HUNTINGBEAST_DESERT_FUR,
-			ItemID.HUNTING_FENNECFOX_FUR,
-			ItemID.HUNTING_FUR_JAGUAR_PERFECT,
-			ItemID.HUNTING_FUR_LEOPARD_PERFECT,
-			ItemID.HUNTING_FUR_TIGER_PERFECT,
-			ItemID.HUNTING_ANTELOPESUN_FUR,
-			ItemID.HUNTING_ANTELOPEMOON_FUR,
-			ItemID.HUNTINGBEAST_SPEEDY_FUR,
-			ItemID.HUNTINGBEAST_SILENT_FUR,
-			ItemID.HUNTINGBEAST_SPEEDY2_FUR,
-			/*ItemID.GOAT_PIT_FUR*/34017
-	);
-
 	private static final String FINISH_ANGLE_MESSAGE = "You finish crafting the golem from this angle.";
 	private static final String REPEATED_ANGLE_MESSAGE = "You've already crafted this side of the golem.";
 	private static final Pattern TOTAL_GOLEMS_MESSAGE = Pattern.compile("You have crafted \\d+ golems on Wyrmscraig\\.");
-	private static final Pattern LOOT_MESSAGE = Pattern.compile("As you complete the golem it leaves a gift on the ground for you: (\\d+) x (.*)\\.");
+	public static final Pattern LOOT_MESSAGE = Pattern.compile("As you complete the golem it leaves a gift on the ground for you: (\\d+) x (.*)\\.");
 
 	private static final int CRAFTING_ANIMATION_ID = 14458;
 
@@ -72,9 +52,13 @@ public class GolemCraftingPlugin extends Plugin
 	private Client client;
 
 	@Inject
+	private EventBus eventBus;
+
+	@Inject
 	private GolemCraftingConfig config;
 
-	@Inject ConfigManager configManager;
+	@Inject
+	private GraphicsUtils graphicsUtils;
 
 	@Inject
 	private Notifier notifier;
@@ -89,6 +73,7 @@ public class GolemCraftingPlugin extends Plugin
 	private FurPouchOverlay furPouchOverlay;
 
 	@Inject
+	@Getter
 	private SunstoneOverlay sunstoneOverlay;
 
 	@Inject
@@ -97,61 +82,32 @@ public class GolemCraftingPlugin extends Plugin
 	@Inject
 	private ResourceWarningInfobox resourceWarningInfobox;
 
+	@Inject
 	@Getter
-	private final List<Golem> golems = List.of(new NorthGolem(), new SouthGolem());
-	private final Set<GolemOverlay> golemOverlays = new HashSet<>();
+	private FurPouch furPouch;
 
-	private static final String MINING_ROCK_MESSAGE = "You swing your pick at the rock.";
-	private static final String MINING_MONOLITH_MESSAGE = "You swing your pick at the monolith.";
-	private static final String MINED_SUNSTONE_MESSAGE = "You manage to mine some sunstone.";
-	private static final int MOMENTUM_TICKS = 5;
-	private boolean miningSunstoneRock = false;
-	private int lastSunstoneMinedTick = -MOMENTUM_TICKS;
+	@Getter
+	private final List<Golem> golems = new ArrayList<>();
+	private final Set<GolemOverlay> golemOverlays = new HashSet<>();
 
 	@Getter
 	private int lastBusyTick;
 
-	private static final String FUR_POUCH_KEY = "furPouchCount";
-	public int getFurPouchCount()
-	{
-		var accountHash = client.getAccountHash();
-		if (accountHash == -1)
-			return -1;
-
-		Integer value = configManager.getConfiguration(GolemCraftingConfig.group, FUR_POUCH_KEY + "_" + accountHash, Integer.class);
-		return value != null ? value : -1;
-	}
-	private void setFurPouchCount(int value)
-	{
-		var accountHash = client.getAccountHash();
-		if (accountHash == -1)
-			return;
-
-		configManager.setConfiguration(GolemCraftingConfig.group, FUR_POUCH_KEY + "_" + accountHash, value);
-	}
-	public int getFurCount()
-	{
-		var inventory = client.getItemContainer(InventoryID.INV);
-		if (inventory == null)
-			return 0;
-
-		var furCount = hasLargeFurPouch() ? getFurPouchCount() : 0;
-		if (furCount == -1)
-			furCount = 0;
-
-		for (var item : inventory.getItems())
-			if (FUR_ITEM_IDS.contains(item.getId()))
-				furCount++;
-
-		return furCount;
-	}
-
 	@Override
 	protected void startUp() throws Exception
 	{
+		eventBus.register(furPouch);
+		eventBus.register(infobox);
+		eventBus.register(sunstoneOverlay);
+
+		golems.add(new NorthGolem(client, notifier, config));
+		golems.add(new SouthGolem(client, notifier, config));
+
 		for (var golem : golems)
 		{
-			var overlay = new GolemOverlay(client, this, config, itemManager, golem);
+			eventBus.register(golem);
+
+			var overlay = new GolemOverlay(client, this, config, graphicsUtils, golem);
 			overlayManager.add(overlay);
 			golemOverlays.add(overlay);
 		}
@@ -162,6 +118,12 @@ public class GolemCraftingPlugin extends Plugin
 	@Override
 	protected void shutDown() throws Exception
 	{
+		eventBus.unregister(furPouch);
+		eventBus.unregister(infobox);
+		eventBus.unregister(sunstoneOverlay);
+		for (var golem : golems)
+			eventBus.unregister(golem);
+
 		for (var golemOverlay : golemOverlays)
 			overlayManager.remove(golemOverlay);
 		overlayManager.remove(furPouchOverlay);
@@ -206,50 +168,12 @@ public class GolemCraftingPlugin extends Plugin
 		var varbitId = event.getVarbitId();
 
 		if (varbitId == VarbitID.BUSY)
-		{
 			lastBusyTick = client.getTickCount();
-			return;
-		}
-
-		for (var golem : golems)
-		{
-			if (varbitId == golem.getProgressID())
-			{
-				golem.setLastProgressTick(client.getTickCount());
-				if (event.getValue() > 1)
-					notifier.notify(config.notification(), "Golem stage complete");
-				else if (event.getValue() == 0 && getFurPouchCount() > 0 && hasLargeFurPouch())
-					setFurPouchCount(getFurPouchCount() - 1);
-			}
-		}
 	}
 
 	@Subscribe
 	public void onChatMessage(ChatMessage event)
 	{
-		if (event.getType() == ChatMessageType.SPAM)
-		{
-			var message = Text.removeTags(event.getMessage());
-
-			if (message.contains(MINING_MONOLITH_MESSAGE))
-			{
-				miningSunstoneRock = false;
-				return;
-			}
-
-			if (message.contains(MINING_ROCK_MESSAGE))
-			{
-				miningSunstoneRock = true;
-				return;
-			}
-
-			if (miningSunstoneRock && message.contains(MINED_SUNSTONE_MESSAGE))
-			{
-				lastSunstoneMinedTick = client.getTickCount();
-				return;
-			}
-		}
-
 		if (event.getType() != ChatMessageType.GAMEMESSAGE)
 			return;
 
@@ -260,29 +184,9 @@ public class GolemCraftingPlugin extends Plugin
 		var lootMatcher = LOOT_MESSAGE.matcher(message);
 		if (lootMatcher.matches())
 		{
-			var lootAmount = Integer.parseInt(lootMatcher.group(1));
 			var loot = lootMatcher.group(2).toLowerCase(Locale.ROOT);
 
 			hideMessage = config.gameChatHideLoot() && (!config.gameChatHideLootExcludeChisel() || !loot.equalsIgnoreCase("Jeweller's Chisel"));
-
-			switch (loot)
-			{
-				case "uncut sapphire":
-					infobox.incrementSapphireCount(lootAmount);
-					break;
-				case "uncut emerald":
-					infobox.incrementEmeraldCount(lootAmount);
-					break;
-				case "uncut ruby":
-					infobox.incrementRubyCount(lootAmount);
-					break;
-				case "uncut diamond":
-					infobox.incrementDiamondCount(lootAmount);
-					break;
-				case "jeweller's chisel":
-					infobox.incrementJewellersChiselCount(lootAmount);
-					break;
-			}
 		}
 
 		hideMessage = hideMessage ||
@@ -298,121 +202,7 @@ public class GolemCraftingPlugin extends Plugin
 
 			lineBuffer.removeMessageNode(event.getMessageNode());
 			client.refreshChat();
-
-			return;
 		}
-
-		if (!hasLargeFurPouch())
-			return;
-
-		if (message.contains("You need to dress the golem in furs from hunted creatures.") ||
-			message.contains("Your fur pouch is empty."))
-		{
-			setFurPouchCount(0);
-			return;
-		}
-
-		var matcher = FUR_POUCH_PATTERN.matcher(message);
-		if (!matcher.find())
-			return;
-
-		setFurPouchCount(Integer.parseInt(matcher.group(1)));
-	}
-
-	@Subscribe
-	public void onMenuOptionClicked(MenuOptionClicked event)
-	{
-		if (event.getMenuAction() == MenuAction.GAME_OBJECT_FIRST_OPTION && event.getMenuOption().equalsIgnoreCase("Shape-golem"))
-		{
-			var sceneX = event.getParam0();
-			var sceneY = event.getParam1();
-
-			var worldView = client.getTopLevelWorldView();
-			var worldPoint = WorldPoint.fromScene(worldView.getScene(), sceneX, sceneY, worldView.getPlane());
-
-			for (var golem : golems)
-			{
-				if (golem.getGolemTile().distanceTo(worldPoint) == 0)
-				{
-					golem.setLastShapeClickTick(client.getTickCount());
-					return;
-				}
-			}
-
-			return;
-		}
-
-		if (event.getMenuAction() == MenuAction.WIDGET_TARGET_ON_WIDGET)
-		{
-			var selectedWidget = client.getSelectedWidget();
-			if (selectedWidget == null)
-				return;
-
-			var sourceItemId = selectedWidget.getItemId();
-			var targetItemId = event.getItemId();
-
-			var furId = -1;
-			if (LARGE_FUR_POUCH_IDS.contains(sourceItemId) && FUR_ITEM_IDS.contains(targetItemId))
-				furId = targetItemId;
-			else if (FUR_ITEM_IDS.contains(sourceItemId) && LARGE_FUR_POUCH_IDS.contains(targetItemId))
-				furId = sourceItemId;
-			else
-				return;
-
-			ItemContainer inventory = client.getItemContainer(InventoryID.INV);
-			if (inventory == null)
-				return;
-
-			var furCount = inventory.count(furId);
-			setFurPouchCount(Math.min(28, getFurPouchCount() + furCount));
-
-			return;
-		}
-
-		var itemId = event.getItemId();
-		if (!LARGE_FUR_POUCH_IDS.contains(itemId))
-			return;
-
-		ItemContainer inventory = client.getItemContainer(InventoryID.INV);
-		if (inventory == null)
-			return;
-
-		switch (event.getMenuOption())
-		{
-			case "Fill":
-				var furCount = 0;
-				for (var item : inventory.getItems())
-					if (FUR_ITEM_IDS.contains(item.getId()))
-						furCount++;
-
-				setFurPouchCount(Math.min(28, getFurPouchCount() + furCount));
-				break;
-			case "Empty":
-				if (isBankOpen())
-				{
-					setFurPouchCount(0);
-					break;
-				}
-
-				var freeSpots = 0;
-				for (var item : inventory.getItems())
-					if (item.getId() == -1)
-						freeSpots++;
-
-				setFurPouchCount(Math.max(0, getFurPouchCount() - freeSpots));
-				break;
-			case "Empty-to-bank": // Item Charges Improved
-				setFurPouchCount(0);
-				break;
-		}
-	}
-
-	@Subscribe
-	public void onGameStateChanged(GameStateChanged event) {
-		if (event.getGameState() == GameState.LOGGED_IN)
-			for (var golem : golems)
-				golem.onLogin();
-		lastSunstoneMinedTick = -MOMENTUM_TICKS;
 	}
 
 	@Provides
@@ -452,30 +242,27 @@ public class GolemCraftingPlugin extends Plugin
 		return true;
 	}
 
-	public boolean hasLargeFurPouch()
+	public int getFurCount()
 	{
-		ItemContainer inventory = client.getItemContainer(InventoryID.INV);
+		var inventory = client.getItemContainer(InventoryID.INV);
 		if (inventory == null)
-			return false;
+			return 0;
 
-		for (var furPouchId : LARGE_FUR_POUCH_IDS)
-			if (inventory.contains(furPouchId))
-				return true;
+		var furCount = furPouch.hasFurPouch() ? furPouch.getCount() : 0;
+		if (furCount == -1)
+			furCount = 0;
 
-		return false;
-	}
+		for (var item : inventory.getItems())
+			if (FurPouch.FUR_ITEM_IDS.contains(item.getId()))
+				furCount++;
 
-	public boolean isBankOpen()
-	{
-		Widget bankWidget = client.getWidget(InterfaceID.BANKMAIN);
-
-		return bankWidget != null && !bankWidget.isHidden();
+		return furCount;
 	}
 
 	public boolean isAnyGolemActive()
 	{
 		for (var golem : golems)
-			if (golem.getProgress(client) > 0)
+			if (golem.getProgress() > 0)
 				return true;
 
 		return false;
@@ -494,17 +281,5 @@ public class GolemCraftingPlugin extends Plugin
 	public boolean isCrafting()
 	{
 		return client.getLocalPlayer().getAnimation() == CRAFTING_ANIMATION_ID;
-	}
-
-	public boolean hasMomentum()
-	{
-		var ticksSinceMined = client.getTickCount() - lastSunstoneMinedTick;
-		return ticksSinceMined < MOMENTUM_TICKS;
-	}
-
-	public int getMomentumTicks()
-	{
-		var momentumTicks = lastSunstoneMinedTick + MOMENTUM_TICKS - client.getTickCount();
-		return Math.max(momentumTicks, 0);
 	}
 }

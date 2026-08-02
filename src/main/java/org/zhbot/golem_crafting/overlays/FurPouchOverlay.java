@@ -1,23 +1,26 @@
-package org.zhbot.golem_crafting;
+package org.zhbot.golem_crafting.overlays;
 
-import net.runelite.api.Client;
 import net.runelite.api.widgets.WidgetItem;
 import net.runelite.client.ui.overlay.*;
+import org.zhbot.golem_crafting.utils.FurPouch;
+import org.zhbot.golem_crafting.GolemCraftingConfig;
+import org.zhbot.golem_crafting.GolemCraftingPlugin;
+import org.zhbot.golem_crafting.utils.GraphicsUtils;
 
 import javax.inject.Inject;
 import java.awt.*;
 
 public class FurPouchOverlay extends WidgetItemOverlay {
-    private final Client client;
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
+    private final GraphicsUtils graphicsUtils;
 
     @Inject
-    private FurPouchOverlay(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config)
+    private FurPouchOverlay(GolemCraftingPlugin plugin, GolemCraftingConfig config, GraphicsUtils graphicsUtils)
     {
-        this.client = client;
         this.plugin = plugin;
         this.config = config;
+        this.graphicsUtils = graphicsUtils;
 
         showOnInventory();
         setPriority(2f);
@@ -25,7 +28,7 @@ public class FurPouchOverlay extends WidgetItemOverlay {
 
     @Override
     public void renderItemOverlay(Graphics2D graphics, int itemId, WidgetItem widgetItem) {
-        if (!GolemCraftingPlugin.LARGE_FUR_POUCH_IDS.contains((itemId)))
+        if (!FurPouch.ALL_POUCH_IDS.contains((itemId)))
             return;
 
         var bounds = widgetItem.getCanvasBounds();
@@ -35,10 +38,22 @@ public class FurPouchOverlay extends WidgetItemOverlay {
         if (!plugin.isWithinGolemArea())
             return;
 
-        var furPouchCount = plugin.getFurPouchCount();
+        var furPouch = plugin.getFurPouch();
+        var furPouchCount = furPouch.getCount();
 
         if (config.showOverlayFurPouch())
-            renderBox(graphics, bounds, furPouchCount);
+        {
+            Color color;
+            if (furPouchCount == 0)
+                color = config.overlayFurPouchEmptyColour();
+            else if (furPouchCount == -1)
+                color = config.overlayFurPouchUnknownColour();
+            else if (furPouchCount <= config.furPouchLowThreshold())
+                color = config.overlayFurPouchLowColour();
+            else
+                color = config.overlayFurPouchColour();
+            graphicsUtils.renderBox(graphics, bounds, color);
+        }
 
         if (!config.showOverlayFurPouchCount())
             return;
@@ -58,24 +73,5 @@ public class FurPouchOverlay extends WidgetItemOverlay {
         graphics.setColor(color);
 
         graphics.drawString(text, bounds.x + 2, bounds.y + 12);
-    }
-
-    private void renderBox(Graphics2D graphics, Rectangle bounds, int furPouchCount)
-    {
-        Color color;
-        if (furPouchCount == 0)
-            color = config.overlayFurPouchEmptyColour();
-        else if (furPouchCount == -1)
-            color = config.overlayFurPouchUnknownColour();
-        else if (furPouchCount <= config.furPouchLowThreshold())
-            color = config.overlayFurPouchLowColour();
-        else
-            color = config.overlayFurPouchColour();
-
-        graphics.setColor(color);
-        graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
-
-        graphics.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 50));
-        graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
     }
 }

@@ -1,15 +1,22 @@
-package org.zhbot.golem_crafting;
+package org.zhbot.golem_crafting.overlays;
 
+import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.ItemContainer;
+import net.runelite.api.events.ChatMessage;
 import net.runelite.api.gameval.InventoryID;
+import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
+import net.runelite.client.util.Text;
+import org.zhbot.golem_crafting.GolemCraftingConfig;
+import org.zhbot.golem_crafting.GolemCraftingPlugin;
 
 import javax.inject.Inject;
 import java.awt.*;
+import java.util.Locale;
 
 public class GolemCraftingInfobox extends OverlayPanel {
     private static final int TOTAL_GOLEMS_ID = 15738;
@@ -61,14 +68,16 @@ public class GolemCraftingInfobox extends OverlayPanel {
             {
                 panelComponent.getChildren().add(LineComponent.builder()
                         .left(golem.getName() + ":")
-                        .right(golem.getProgress(client) + "/6")
+                        .right(golem.getProgress() + "/6")
                         .build());
             }
         }
 
         if (config.showInfoboxFurPouch())
         {
-            var furPouchCount = plugin.getFurPouchCount();
+            var furPouch = plugin.getFurPouch();
+            var furPouchCount = furPouch.getCount();
+
             Color color;
             if (furPouchCount == 0)
                 color = config.infoboxFurPouchEmptyTextColour();
@@ -80,7 +89,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
                 color = Color.WHITE;
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Fur Pouch:")
-                    .right(plugin.hasLargeFurPouch() ? furPouchCount + "/28" : "N/A")
+                    .right(furPouch.hasFurPouch() ? furPouchCount + "/" + furPouch.getCapacity() : "N/A")
                     .rightColor(color)
                     .build());
         }
@@ -103,7 +112,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
 
         if (config.showInfoboxSunStoneMomentum())
         {
-            var ticks = plugin.getMomentumTicks();
+            var ticks = plugin.getSunstoneOverlay().getMomentumTicks();
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Momentum:")
                     .right(String.valueOf(ticks))
@@ -147,28 +156,38 @@ public class GolemCraftingInfobox extends OverlayPanel {
         return super.render(graphics);
     }
 
-    public void incrementSapphireCount(int value)
+    @Subscribe
+    public void onChatMessage(ChatMessage event)
     {
-        sapphireCount += value;
-    }
+        if (event.getType() != ChatMessageType.GAMEMESSAGE)
+            return;
 
-    public void incrementEmeraldCount(int value)
-    {
-        emeraldCount += value;
-    }
+        var message = Text.removeTags(event.getMessage());
 
-    public void incrementRubyCount(int value)
-    {
-        rubyCount += value;
-    }
+        var lootMatcher = GolemCraftingPlugin.LOOT_MESSAGE.matcher(message);
+        if (!lootMatcher.matches())
+            return;
 
-    public void incrementDiamondCount(int value)
-    {
-        diamondCount += value;
-    }
+        var lootAmount = Integer.parseInt(lootMatcher.group(1));
+        var loot = lootMatcher.group(2).toLowerCase(Locale.ROOT);
 
-    public void incrementJewellersChiselCount(int value)
-    {
-        jewellersChiselCount += value;
+        switch (loot)
+        {
+            case "uncut sapphire":
+                sapphireCount += lootAmount;
+                break;
+            case "uncut emerald":
+                emeraldCount += lootAmount;
+                break;
+            case "uncut ruby":
+                rubyCount += lootAmount;
+                break;
+            case "uncut diamond":
+                diamondCount += lootAmount;
+                break;
+            case "jeweller's chisel":
+                jewellersChiselCount += lootAmount;
+                break;
+        }
     }
 }

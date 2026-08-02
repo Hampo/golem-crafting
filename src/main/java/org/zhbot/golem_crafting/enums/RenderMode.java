@@ -1,4 +1,4 @@
-package org.zhbot.golem_crafting;
+package org.zhbot.golem_crafting.enums;
 
 public enum RenderMode {
     CLICKBOX("Clickbox"),

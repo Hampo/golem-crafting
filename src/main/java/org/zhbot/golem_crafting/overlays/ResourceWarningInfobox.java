@@ -1,15 +1,14 @@
-package org.zhbot.golem_crafting;
+package org.zhbot.golem_crafting.overlays;
 
 import net.runelite.api.Client;
-import net.runelite.api.ItemContainer;
 import net.runelite.api.gameval.InventoryID;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.LineComponent;
-import net.runelite.client.ui.overlay.components.TitleComponent;
+import org.zhbot.golem_crafting.GolemCraftingConfig;
+import org.zhbot.golem_crafting.GolemCraftingPlugin;
 
 import javax.inject.Inject;
-import javax.swing.*;
 import java.awt.*;
 
 public class ResourceWarningInfobox extends OverlayPanel {

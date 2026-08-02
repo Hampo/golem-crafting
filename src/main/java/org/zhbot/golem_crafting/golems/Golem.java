@@ -1,17 +1,27 @@
-package org.zhbot.golem_crafting;
+package org.zhbot.golem_crafting.golems;
 
 import lombok.Getter;
-import lombok.Setter;
 import net.runelite.api.Client;
 import net.runelite.api.GameObject;
+import net.runelite.api.GameState;
+import net.runelite.api.MenuAction;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
-
-import java.awt.*;
+import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.MenuOptionClicked;
+import net.runelite.api.events.VarbitChanged;
+import net.runelite.client.Notifier;
+import net.runelite.client.eventbus.Subscribe;
+import org.zhbot.golem_crafting.GolemCraftingConfig;
+import org.zhbot.golem_crafting.enums.CardinalDirection;
 
 public abstract class Golem {
     public static final int RESPAWN_DELAY = 10;
     private static final int MAX_PROGRESS = 10;
+
+    private final Client client;
+    private final Notifier notifier;
+    private final GolemCraftingConfig config;
 
     @Getter
     private final String name;
@@ -22,7 +32,6 @@ public abstract class Golem {
     private int lastProgressTick = -RESPAWN_DELAY;
     private boolean firstProgressTick = true;
     @Getter
-    @Setter
     private int lastShapeClickTick = -1;
 
     private final int northStateID;
@@ -50,8 +59,12 @@ public abstract class Golem {
 
     private final CardinalDirection finalTile;
 
-    public Golem(String name, int stationID, int progressID, int northStateID, int eastStateID, int southStateID, int westStateID, int northProgressID, int eastProgressID, int southProgressID, int westProgressID, WorldPoint golemTile, CardinalDirection finalTile)
+    public Golem(Client client, Notifier notifier, GolemCraftingConfig config, String name, int stationID, int progressID, int northStateID, int eastStateID, int southStateID, int westStateID, int northProgressID, int eastProgressID, int southProgressID, int westProgressID, WorldPoint golemTile, CardinalDirection finalTile)
     {
+        this.client = client;
+        this.notifier = notifier;
+        this.config = config;
+
         this.name = name;
         this.stationID = stationID;
         this.progressID = progressID;
@@ -71,38 +84,78 @@ public abstract class Golem {
         this.finalTile = finalTile;
     }
 
-    public int getProgress(final Client client)
+    @Subscribe
+    public void onVarbitChanged(VarbitChanged event)
+    {
+        var varbitId = event.getVarbitId();
+
+        if (varbitId != progressID)
+            return;
+
+        if (firstProgressTick)
+            firstProgressTick = false;
+        else
+            lastProgressTick = client.getTickCount();
+
+        if (event.getValue() > 1)
+            notifier.notify(config.notification(), name + " stage complete");
+    }
+
+    @Subscribe
+    public void onMenuOptionClicked(MenuOptionClicked event) {
+        if (event.getMenuAction() == MenuAction.GAME_OBJECT_FIRST_OPTION && event.getMenuOption().equalsIgnoreCase("Shape-golem")) {
+            var sceneX = event.getParam0();
+            var sceneY = event.getParam1();
+
+            var worldView = client.getTopLevelWorldView();
+            var worldPoint = WorldPoint.fromScene(worldView.getScene(), sceneX, sceneY, worldView.getPlane());
+
+            if (golemTile.distanceTo(worldPoint) == 0)
+                lastShapeClickTick = client.getTickCount();
+        }
+    }
+
+    @Subscribe
+    public void onGameStateChanged(GameStateChanged event) {
+        if (event.getGameState() != GameState.LOGGED_IN)
+            return;
+
+        firstProgressTick = true;
+        lastProgressTick = -RESPAWN_DELAY;
+    }
+
+    public int getProgress()
     {
         return client.getVarbitValue(progressID);
     }
 
-    public boolean isNorthDone(final Client client)
+    public boolean isNorthDone()
     {
         return client.getVarbitValue(northStateID) != 0;
     }
 
-    public boolean isEastDone(final Client client)
+    public boolean isEastDone()
     {
         return client.getVarbitValue(eastStateID) != 0;
     }
 
-    public boolean isSouthDone(final Client client)
+    public boolean isSouthDone()
     {
         return client.getVarbitValue(southStateID) != 0;
     }
 
-    public boolean isWestDone(final Client client)
+    public boolean isWestDone()
     {
         return client.getVarbitValue(westStateID) != 0;
     }
 
-    public float getNorthProgress(final Client client) { return (float)client.getVarbitValue(northProgressID) / MAX_PROGRESS; }
+    public float getNorthProgress() { return (float)client.getVarbitValue(northProgressID) / MAX_PROGRESS; }
 
-    public float getEastProgress(final Client client) { return (float)client.getVarbitValue(eastProgressID) / MAX_PROGRESS; }
+    public float getEastProgress() { return (float)client.getVarbitValue(eastProgressID) / MAX_PROGRESS; }
 
-    public float getSouthProgress(final Client client) { return (float)client.getVarbitValue(southProgressID) / MAX_PROGRESS; }
+    public float getSouthProgress() { return (float)client.getVarbitValue(southProgressID) / MAX_PROGRESS; }
 
-    public float getWestProgress(final Client client) { return (float)client.getVarbitValue(westProgressID) / MAX_PROGRESS; }
+    public float getWestProgress() { return (float)client.getVarbitValue(westProgressID) / MAX_PROGRESS; }
 
     public WorldPoint getFinalTile() {
         switch (finalTile)
@@ -120,7 +173,7 @@ public abstract class Golem {
         return null;
     }
 
-    public GameObject getStationGameObject(final Client client)
+    public GameObject getStationGameObject()
     {
         var localTile = LocalPoint.fromWorld(client, golemTile);
         if (localTile == null)
@@ -143,22 +196,6 @@ public abstract class Golem {
                 return gameObject;
 
         return null;
-    }
-
-    public void onLogin()
-    {
-        firstProgressTick = true;
-        lastProgressTick = -RESPAWN_DELAY;
-    }
-
-    public void setLastProgressTick(int tick)
-    {
-        if (firstProgressTick)
-        {
-            firstProgressTick = false;
-            return;
-        }
-        lastProgressTick = tick;
     }
 }
 
