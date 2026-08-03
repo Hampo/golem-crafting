@@ -21,7 +21,6 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 // TODO:
-// - Support Empty Storage Containers in bank/deposit box
 // - Support Empty in deposit box
 // - Handle tattered fur
 public class FurPouch {
@@ -72,7 +71,8 @@ public class FurPouch {
     private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");
     private static final List<String> FUR_POUCH_EMPTY_MESSAGES = List.of(
             "You need to dress the golem in furs from hunted creatures.",
-            "Your fur pouch is empty."
+            "Your fur pouch is empty.",
+            "You empty all of your containers into the bank.",
     );
     private static final List<String> CAUGHT_CREATURE_MESSAGES = List.of(
             "You manage to noose a polar kebbit that is hiding in the snowdrift.",
