@@ -72,7 +72,7 @@ public class FurPouch {
     private static final List<String> FUR_POUCH_EMPTY_MESSAGES = List.of(
             "You need to dress the golem in furs from hunted creatures.",
             "Your fur pouch is empty.",
-            "You empty all of your containers into the bank.",
+            "You empty all of your containers into the bank."
     );
     private static final List<String> CAUGHT_CREATURE_MESSAGES = List.of(
             "You manage to noose a polar kebbit that is hiding in the snowdrift.",
