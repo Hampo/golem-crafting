@@ -7,8 +7,11 @@ import net.runelite.api.Point;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.game.ItemManager;
+import net.runelite.client.ui.FontManager;
 import net.runelite.client.ui.overlay.OverlayUtil;
 import net.runelite.client.ui.overlay.components.ProgressPieComponent;
+import net.runelite.client.ui.overlay.components.TextComponent;
+import net.runelite.client.util.ColorUtil;
 import org.zhbot.golem_crafting.enums.RenderMode;
 
 import javax.inject.Inject;
@@ -29,11 +32,20 @@ public class GraphicsUtils {
 
     public void renderBox(Graphics2D graphics, Rectangle bounds, Color color)
     {
-        graphics.setColor(color);
-        graphics.drawRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        var mousePosition = client.getMouseCanvasPosition();
 
-        graphics.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 50));
-        graphics.fillRect(bounds.x, bounds.y, bounds.width, bounds.height);
+        var fillColour = ColorUtil.colorWithAlpha(color, 50);
+        OverlayUtil.renderHoverableArea(graphics, bounds, mousePosition, fillColour, color, color.darker());
+    }
+
+    public void renderText(Graphics2D graphics, int x, int y, String text, Color color)
+    {
+        var textComponent = new TextComponent();
+        textComponent.setFont(FontManager.getRunescapeSmallFont());
+        textComponent.setPosition(x, y);
+        textComponent.setText(text);
+        textComponent.setColor(color);
+        textComponent.render(graphics);
     }
 
     public void renderTile(Graphics2D graphics, WorldPoint worldPoint, Color color)
@@ -51,7 +63,7 @@ public class GraphicsUtils {
         var area = renderMode == RenderMode.CLICKBOX ? gameObject.getClickbox() : gameObject.getConvexHull();
         var mousePosition = client.getMouseCanvasPosition();
 
-        var borderColour = new Color(color.getRed(), color.getGreen(), color.getBlue(), 255);
+        var borderColour = ColorUtil.colorWithAlpha(color, 255);
         OverlayUtil.renderHoverableArea(graphics, area, mousePosition, color, borderColour, borderColour.darker());
     }
 
