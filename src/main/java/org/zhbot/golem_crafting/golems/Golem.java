@@ -14,6 +14,7 @@ import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.Notifier;
 import net.runelite.client.eventbus.Subscribe;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
+import org.zhbot.golem_crafting.GolemCraftingPlugin;
 import org.zhbot.golem_crafting.enums.CardinalDirection;
 
 import java.awt.*;
@@ -24,6 +25,7 @@ public abstract class Golem {
 
     private final Client client;
     private final Notifier notifier;
+    private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
 
     @Getter
@@ -62,10 +64,11 @@ public abstract class Golem {
 
     private final CardinalDirection finalTile;
 
-    public Golem(Client client, Notifier notifier, GolemCraftingConfig config, String name, int stationID, int progressID, int northStateID, int eastStateID, int southStateID, int westStateID, int northProgressID, int eastProgressID, int southProgressID, int westProgressID, WorldPoint golemTile, CardinalDirection finalTile)
+    public Golem(Client client, Notifier notifier, GolemCraftingPlugin plugin, GolemCraftingConfig config, String name, int stationID, int progressID, int northStateID, int eastStateID, int southStateID, int westStateID, int northProgressID, int eastProgressID, int southProgressID, int westProgressID, WorldPoint golemTile, CardinalDirection finalTile)
     {
         this.client = client;
         this.notifier = notifier;
+        this.plugin = plugin;
         this.config = config;
 
         this.name = name;
@@ -149,8 +152,8 @@ public abstract class Golem {
         var option = entry.getOption();
         if (option.equalsIgnoreCase("Start-golem"))
         {
-            var ticksSinceProgress = client.getTickCount() - lastProgressTick;
-            if (ticksSinceProgress < RESPAWN_DELAY)
+            if (!plugin.hasGolemMaterials()
+                || client.getTickCount() - lastProgressTick < RESPAWN_DELAY)
                 client.getMenu().removeMenuEntry(entry);
 
             return;

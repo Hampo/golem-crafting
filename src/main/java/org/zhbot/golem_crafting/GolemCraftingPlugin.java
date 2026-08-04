@@ -117,8 +117,8 @@ public class GolemCraftingPlugin extends Plugin
 		eventBus.register(infobox);
 		eventBus.register(sunstoneOverlay);
 
-		golems.add(new NorthGolem(client, notifier, config));
-		golems.add(new SouthGolem(client, notifier, config));
+		golems.add(new NorthGolem(client, notifier, this, config));
+		golems.add(new SouthGolem(client, notifier, this, config));
 
 		for (var golem : golems)
 		{

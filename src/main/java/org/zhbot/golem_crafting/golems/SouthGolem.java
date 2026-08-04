@@ -4,6 +4,7 @@ import net.runelite.api.Client;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.client.Notifier;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
+import org.zhbot.golem_crafting.GolemCraftingPlugin;
 import org.zhbot.golem_crafting.enums.CardinalDirection;
 
 public class SouthGolem extends Golem {
@@ -23,8 +24,8 @@ public class SouthGolem extends Golem {
     private static final WorldPoint GOLEM_TILE = new WorldPoint(2595, 2253, 0);
     private static final CardinalDirection FINAL_TILE = CardinalDirection.NORTH;
 
-    public SouthGolem(Client client, Notifier notifier, GolemCraftingConfig config)
+    public SouthGolem(Client client, Notifier notifier, GolemCraftingPlugin plugin, GolemCraftingConfig config)
     {
-        super(client, notifier, config, "South Golem", STATION_ID, PROGRESS_ID, NORTH_STATE_ID, EAST_STATE_ID, SOUTH_STATE_ID, WEST_STATE_ID, NORTH_PROGRESS_ID, EAST_PROGRESS_ID, SOUTH_PROGRESS_ID, WEST_PROGRESS_ID, GOLEM_TILE, FINAL_TILE);
+        super(client, notifier, plugin, config, "South Golem", STATION_ID, PROGRESS_ID, NORTH_STATE_ID, EAST_STATE_ID, SOUTH_STATE_ID, WEST_STATE_ID, NORTH_PROGRESS_ID, EAST_PROGRESS_ID, SOUTH_PROGRESS_ID, WEST_PROGRESS_ID, GOLEM_TILE, FINAL_TILE);
     }
 }
