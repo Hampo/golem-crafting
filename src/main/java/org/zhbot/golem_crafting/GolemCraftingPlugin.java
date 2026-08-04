@@ -96,8 +96,11 @@ public class GolemCraftingPlugin extends Plugin
 	private int sunstoneCount = 0;
 	@Getter
 	private int sunstoneCoreCount = 0;
+	@Getter
 	private boolean hasChisel = false;
+	@Getter
 	private boolean hasHammer = false;
+	@Getter
 	private boolean hasHammerEquipped = false;
 
 	@Getter

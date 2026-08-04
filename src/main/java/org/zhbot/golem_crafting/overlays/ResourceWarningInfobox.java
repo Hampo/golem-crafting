@@ -44,6 +44,24 @@ public class ResourceWarningInfobox extends OverlayPanel {
         var empty = false;
         var low = false;
 
+        if (config.resourceInfoboxWarnChisel() && !plugin.isHasChisel())
+        {
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Chisel")
+                    .right("Missing")
+                    .build());
+            empty = true;
+        }
+
+        if (config.resourceInfoboxWarnHammer() && !(plugin.isHasHammer() || plugin.isHasHammerEquipped()))
+        {
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Hammer")
+                    .right("Missing")
+                    .build());
+            empty = true;
+        }
+
         if (config.resourceInfoboxWarnFur())
         {
             var furCount = plugin.getTotalFurCount();

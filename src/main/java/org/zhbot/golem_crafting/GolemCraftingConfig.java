@@ -202,11 +202,35 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "resourceInfoboxWarnChisel",
+			name = "Warn on Chisel",
+			description = "Enable the resource warning infobox chisel warning",
+			section = resourceWarningSection,
+			position = 2
+	)
+	default boolean resourceInfoboxWarnChisel()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "resourceInfoboxWarnHammer",
+			name = "Warn on Hammer",
+			description = "Enable the resource warning infobox hammer warning",
+			section = resourceWarningSection,
+			position = 3
+	)
+	default boolean resourceInfoboxWarnHammer()
+	{
+		return true;
+	}
+
+	@ConfigItem(
 			keyName = "resourceInfoboxWarnFur",
 			name = "Warn on Fur",
 			description = "Enable the resource warning infobox fur warning",
 			section = resourceWarningSection,
-			position = 2
+			position = 4
 	)
 	default boolean resourceInfoboxWarnFur()
 	{
@@ -218,7 +242,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Threshold",
 			description = "The low threshold for fur. Set to 0 to only warn on empty.",
 			section = resourceWarningSection,
-			position = 3
+			position = 5
 	)
 	default int resourceInfoboxFurThreshold()
 	{
@@ -230,7 +254,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Warn on Sunstone",
 			description = "Enable the resource warning infobox sunstone warning",
 			section = resourceWarningSection,
-			position = 4
+			position = 6
 	)
 	default boolean resourceInfoboxWarnSunstone()
 	{
@@ -242,7 +266,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Sunstone Threshold",
 			description = "The low threshold for sunstone. Set to 0 to only warn on empty.",
 			section = resourceWarningSection,
-			position = 5
+			position = 7
 	)
 	default int resourceInfoboxSunstoneThreshold()
 	{
@@ -254,7 +278,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Warn on Sunstone Core",
 			description = "Enable the resource warning infobox sunstone warning",
 			section = resourceWarningSection,
-			position = 6
+			position = 8
 	)
 	default boolean resourceInfoboxWarnSunstoneCore()
 	{
@@ -266,7 +290,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Core Threshold",
 			description = "The low threshold for sunstone core. Set to 0 to only warn on empty.",
 			section = resourceWarningSection,
-			position = 7
+			position = 9
 	)
 	default int resourceInfoboxCoreThreshold()
 	{
@@ -279,7 +303,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Low Colour",
 			description = "The infobox colour for when resources are low",
 			section = resourceWarningSection,
-			position = 8
+			position = 10
 	)
 	default Color resourceInfoboxLowColour()
 	{
@@ -292,7 +316,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Empty Colour 1",
 			description = "The infobox colour for when resources are empty",
 			section = resourceWarningSection,
-			position = 9
+			position = 11
 	)
 	default Color resourceInfoboxEmptyColour1()
 	{
@@ -305,7 +329,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Empty Colour 2",
 			description = "The second infobox colour for when resources are empty",
 			section = resourceWarningSection,
-			position = 10
+			position = 12
 	)
 	default Color resourceInfoboxEmptyColour2()
 	{
