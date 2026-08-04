@@ -90,6 +90,14 @@ public class GolemCraftingInfobox extends OverlayPanel {
                     .build());
         }
 
+        if (config.showInfoboxFur())
+        {
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Fur:")
+                    .right(String.valueOf(plugin.getFurCount()))
+                    .build());
+        }
+
         if (config.showInfoboxSunStone())
         {
             panelComponent.getChildren().add(LineComponent.builder()

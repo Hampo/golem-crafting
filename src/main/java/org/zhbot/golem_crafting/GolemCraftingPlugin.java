@@ -89,6 +89,7 @@ public class GolemCraftingPlugin extends Plugin
 	@Inject
 	@Getter
 	private FurPouch furPouch;
+	@Getter
 	private int furCount;
 
 	@Getter

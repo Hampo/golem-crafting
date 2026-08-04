@@ -87,11 +87,23 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
+			keyName = "infoboxFur",
+			name = "Show fur",
+			description = "Show inventory fur count",
+			section = infoboxSection,
+			position = 4
+	)
+	default boolean showInfoboxFur()
+	{
+		return false;
+	}
+
+	@ConfigItem(
 			keyName = "infoboxSunStone",
 			name = "Show sunstone",
 			description = "Show sunstone count",
 			section = infoboxSection,
-			position = 4
+			position = 5
 	)
 	default boolean showInfoboxSunStone()
 	{
@@ -103,7 +115,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Show sunstone momentum",
 			description = "Show sunstone momentum",
 			section = infoboxSection,
-			position = 5
+			position = 6
 	)
 	default boolean showInfoboxSunStoneMomentum()
 	{
@@ -115,7 +127,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Show loot",
 			description = "Show loot counts",
 			section = infoboxSection,
-			position = 6
+			position = 7
 	)
 	default boolean showInfoboxLoot()
 	{
@@ -127,7 +139,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Unknown Text Colour",
 			description = "The text colour for when the fur pouch contents are unknown",
 			section = infoboxSection,
-			position = 7
+			position = 8
 	)
 	default Color infoboxFurPouchUnknownTextColour()
 	{
@@ -139,7 +151,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Low Text Colour",
 			description = "The text colour for when the fur pouch contents are low",
 			section = infoboxSection,
-			position = 8
+			position = 9
 	)
 	default Color infoboxFurPouchLowTextColour()
 	{
@@ -151,7 +163,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Fur Pouch Empty Text Colour",
 			description = "The text colour for when the fur pouch is empty",
 			section = infoboxSection,
-			position = 9
+			position = 10
 	)
 	default Color infoboxFurPouchEmptyTextColour()
 	{
