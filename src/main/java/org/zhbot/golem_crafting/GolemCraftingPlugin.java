@@ -48,6 +48,10 @@ public class GolemCraftingPlugin extends Plugin
 
 	private static final int CRAFTING_ANIMATION_ID = 14458;
 
+	private static final int SUNSTONE_ID = 34020;
+	private static final int SUNSTONE_CORE_ID = 34022;
+	private static final int JEWELLERS_CHISEL_ID = 34024;
+
 	@Inject
 	private Client client;
 
@@ -85,6 +89,15 @@ public class GolemCraftingPlugin extends Plugin
 	@Inject
 	@Getter
 	private FurPouch furPouch;
+	private int furCount;
+
+	@Getter
+	private int sunstoneCount = 0;
+	@Getter
+	private int sunstoneCoreCount = 0;
+	private boolean hasChisel = false;
+	private boolean hasHammer = false;
+	private boolean hasHammerEquipped = false;
 
 	@Getter
 	private final List<Golem> golems = new ArrayList<>();
@@ -205,6 +218,37 @@ public class GolemCraftingPlugin extends Plugin
 		}
 	}
 
+	@Subscribe
+	public void onItemContainerChanged(ItemContainerChanged event)
+	{
+		var containerId = event.getContainerId();
+
+		if (containerId == InventoryID.WORN)
+		{
+			var equipment = event.getItemContainer();
+
+			hasHammerEquipped = equipment.contains(ItemID.IMCANDO_HAMMER) || equipment.contains(ItemID.IMCANDO_HAMMER_OFFHAND);
+			return;
+		}
+		else if (containerId != InventoryID.INV)
+		{
+			return;
+		}
+
+		var inventory = event.getItemContainer();
+
+		var furCount = 0;
+		for (var item : inventory.getItems())
+			if (FurPouch.FUR_ITEM_IDS.contains(item.getId()))
+				furCount++;
+		this.furCount = furCount;
+
+		hasChisel = inventory.contains(ItemID.CHISEL) || inventory.contains(JEWELLERS_CHISEL_ID);
+		hasHammer = inventory.contains(ItemID.HAMMER) || inventory.contains(ItemID.IMCANDO_HAMMER) || inventory.contains(ItemID.IMCANDO_HAMMER_OFFHAND);
+		sunstoneCount = inventory.count(SUNSTONE_ID);
+		sunstoneCoreCount = inventory.count(SUNSTONE_CORE_ID);
+	}
+
 	@Provides
 	GolemCraftingConfig provideConfig(ConfigManager configManager)
 	{
@@ -213,50 +257,31 @@ public class GolemCraftingPlugin extends Plugin
 
 	public boolean hasGolemMaterials()
 	{
-		ItemContainer inventory = client.getItemContainer(InventoryID.INV);
-		if (inventory == null)
-			return false;
-		ItemContainer equipment = client.getItemContainer(InventoryID.WORN);
-
-		if (!(inventory.contains(ItemID.CHISEL) || inventory.contains(34024/*Jewellers' Chisel*/)))
+		if (!(hasHammer || hasHammerEquipped))
 			return false;
 
-		if (!(inventory.contains(ItemID.HAMMER) || inventory.contains(ItemID.IMCANDO_HAMMER) || inventory.contains(ItemID.IMCANDO_HAMMER_OFFHAND)))
-		{
-			if (equipment == null)
-				return false;
-
-			if (!(equipment.contains(ItemID.IMCANDO_HAMMER) || equipment.contains(ItemID.IMCANDO_HAMMER_OFFHAND)))
-				return false;
-		}
-
-		if (!inventory.contains(34022/*Sunstone Core*/))
+		if (!hasChisel)
 			return false;
 
-		if (inventory.count(34020/*Sunstone*/) < 4)
+		if (sunstoneCoreCount == 0)
 			return false;
 
-		if (getFurCount() == 0)
+		if (sunstoneCount < 4)
+			return false;
+
+		if (getTotalFurCount() == 0)
 			return false;
 
 		return true;
 	}
 
-	public int getFurCount()
+	public int getTotalFurCount()
 	{
-		var inventory = client.getItemContainer(InventoryID.INV);
-		if (inventory == null)
-			return 0;
+		var furPouchCount = furPouch.hasFurPouch() ? furPouch.getCount() : 0;
+		if (furPouchCount == -1)
+			furPouchCount = 0;
 
-		var furCount = furPouch.hasFurPouch() ? furPouch.getCount() : 0;
-		if (furCount == -1)
-			furCount = 0;
-
-		for (var item : inventory.getItems())
-			if (FurPouch.FUR_ITEM_IDS.contains(item.getId()))
-				furCount++;
-
-		return furCount;
+		return furPouchCount + furCount;
 	}
 
 	public boolean isAnyGolemActive()

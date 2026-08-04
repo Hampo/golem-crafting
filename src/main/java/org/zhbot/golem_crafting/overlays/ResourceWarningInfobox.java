@@ -46,7 +46,7 @@ public class ResourceWarningInfobox extends OverlayPanel {
 
         if (config.resourceInfoboxWarnFur())
         {
-            var furCount = plugin.getFurCount();
+            var furCount = plugin.getTotalFurCount();
 
             if (furCount == 0)
             {

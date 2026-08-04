@@ -2,9 +2,7 @@ package org.zhbot.golem_crafting.overlays;
 
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
-import net.runelite.api.ItemContainer;
 import net.runelite.api.events.ChatMessage;
-import net.runelite.api.gameval.InventoryID;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -20,8 +18,6 @@ import java.util.Locale;
 
 public class GolemCraftingInfobox extends OverlayPanel {
     private static final int TOTAL_GOLEMS_ID = 15738;
-    private static final int SUNSTONE_ID = 34020;
-    private static final int SUNSTONE_CORE_ID = 34022;
 
     private final Client client;
     private final GolemCraftingPlugin plugin;
@@ -96,18 +92,14 @@ public class GolemCraftingInfobox extends OverlayPanel {
 
         if (config.showInfoboxSunStone())
         {
-            ItemContainer inventory = client.getItemContainer(InventoryID.INV);
-            if (inventory != null)
-            {
-                panelComponent.getChildren().add(LineComponent.builder()
-                        .left("Sunstone Core:")
-                        .right(String.valueOf(inventory.count(SUNSTONE_CORE_ID)))
-                        .build());
-                panelComponent.getChildren().add(LineComponent.builder()
-                        .left("Sunstone:")
-                        .right(String.valueOf(inventory.count(SUNSTONE_ID)))
-                        .build());
-            }
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Sunstone Core:")
+                    .right(String.valueOf(plugin.getSunstoneCoreCount()))
+                    .build());
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Sunstone:")
+                    .right(String.valueOf(plugin.getSunstoneCount()))
+                    .build());
         }
 
         if (config.showInfoboxSunStoneMomentum())

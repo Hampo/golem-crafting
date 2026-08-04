@@ -1,6 +1,7 @@
 package org.zhbot.golem_crafting.utils;
 
 import com.google.common.collect.Sets;
+import lombok.Getter;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
@@ -35,18 +36,7 @@ public class FurPouch {
             ItemID.HG_FURPOUCH_LARGE_OPEN
     );
     public static final Set<Integer> ALL_POUCH_IDS = Sets.union(CLOSED_POUCH_IDS, OPEN_POUCH_IDS);
-    private static final Set<Integer> SMALL_POUCH_IDS = Set.of(
-            ItemID.HG_FURPOUCH_SMALL,
-            ItemID.HG_FURPOUCH_SMALL_OPEN
-    );
-    private static final Set<Integer> MED_POUCH_IDS = Set.of(
-            ItemID.HG_FURPOUCH_MED,
-            ItemID.HG_FURPOUCH_MED_OPEN
-    );
-    private static final Set<Integer> LARGE_POUCH_IDS = Set.of(
-            ItemID.HG_FURPOUCH_LARGE,
-            ItemID.HG_FURPOUCH_LARGE_OPEN
-    );
+
     private static final int SMALL_POUCH_CAPACITY = 14;
     private static final int MED_POUCH_CAPACITY = 21;
     private static final int LARGE_POUCH_CAPACITY = 28;
@@ -93,6 +83,13 @@ public class FurPouch {
     private final ConfigManager configManager;
     private final GolemCraftingPlugin plugin;
 
+    @Getter
+    private boolean hasOpenFurPouch = false;
+    @Getter
+    private boolean hasClosedFurPouch = false;
+    @Getter
+    private FurPouchType furPouchType = FurPouchType.INVALID;
+
     @Inject
     private FurPouch(Client client, ConfigManager configManager, GolemCraftingPlugin plugin)
     {
@@ -104,56 +101,9 @@ public class FurPouch {
             hunterXP = client.getSkillExperience(Skill.HUNTER);
     }
 
-    public boolean hasClosedFurPouch()
-    {
-        var inventory = client.getItemContainer(InventoryID.INV);
-        if (inventory == null)
-            return false;
-
-        for (var closedPouchID : CLOSED_POUCH_IDS)
-            if (inventory.contains(closedPouchID))
-                return true;
-
-        return false;
-    }
-
-    public boolean hasOpenFurPouch()
-    {
-        var inventory = client.getItemContainer(InventoryID.INV);
-        if (inventory == null)
-            return false;
-
-        for (var openPouchID : OPEN_POUCH_IDS)
-            if (inventory.contains(openPouchID))
-                return true;
-
-        return false;
-    }
-
     public boolean hasFurPouch()
     {
-        return hasClosedFurPouch() || hasOpenFurPouch();
-    }
-
-    public FurPouchType getFurPouchType()
-    {
-        var inventory = client.getItemContainer(InventoryID.INV);
-        if (inventory == null)
-            return FurPouchType.INVALID;
-
-        for (var smallPouchID : SMALL_POUCH_IDS)
-            if (inventory.contains(smallPouchID))
-                return FurPouchType.SMALL;
-
-        for (var medPouchID : MED_POUCH_IDS)
-            if (inventory.contains(medPouchID))
-                return FurPouchType.MED;
-
-        for (var largePouchID : LARGE_POUCH_IDS)
-            if (inventory.contains(largePouchID))
-                return FurPouchType.LARGE;
-
-        return FurPouchType.INVALID;
+        return hasClosedFurPouch || hasOpenFurPouch;
     }
 
     public int getCapacity()
@@ -237,7 +187,7 @@ public class FurPouch {
             return;
         }
 
-        if (!hasOpenFurPouch() || getCount() == -1)
+        if (!hasOpenFurPouch || getCount() == -1)
             return;
 
         for (var caughtMessage : CAUGHT_CREATURE_MESSAGES)
@@ -352,7 +302,7 @@ public class FurPouch {
         var xpGained = xp - hunterXP;
         hunterXP = xp;
 
-        if (!hasOpenFurPouch() || getCount() == -1)
+        if (!hasOpenFurPouch || getCount() == -1)
             return;
 
         if (xpGained < GOAT_PIT_MIN_XP || xpGained > GOAT_PIT_MAX_XP)
@@ -382,7 +332,50 @@ public class FurPouch {
         if (event.getContainerId() != InventoryID.INV)
             return;
 
-        goatHornCount = event.getItemContainer().count(ItemID.DESERT_GOAT_HORN);
+        var goatHornCount = 0;
+        var hasClosedFurPouch = false;
+        var hasOpenFurPouch = false;
+        var furPouchType = FurPouchType.INVALID;
+        for (var item : event.getItemContainer().getItems())
+        {
+            if (item == null)
+                continue;
+
+            switch (item.getId()) {
+                case ItemID.DESERT_GOAT_HORN:
+                    goatHornCount++;
+                    break;
+                case ItemID.HG_FURPOUCH_SMALL:
+                    hasClosedFurPouch = true;
+                    furPouchType = FurPouchType.SMALL;
+                    break;
+                case ItemID.HG_FURPOUCH_SMALL_OPEN:
+                    hasOpenFurPouch = true;
+                    furPouchType = FurPouchType.SMALL;
+                    break;
+                case ItemID.HG_FURPOUCH_MED:
+                    hasClosedFurPouch = true;
+                    furPouchType = FurPouchType.MED;
+                    break;
+                case ItemID.HG_FURPOUCH_MED_OPEN:
+                    hasOpenFurPouch = true;
+                    furPouchType = FurPouchType.MED;
+                    break;
+                case ItemID.HG_FURPOUCH_LARGE:
+                    hasClosedFurPouch = true;
+                    furPouchType = FurPouchType.LARGE;
+                    break;
+                case ItemID.HG_FURPOUCH_LARGE_OPEN:
+                    hasOpenFurPouch = true;
+                    furPouchType = FurPouchType.LARGE;
+                    break;
+            }
+        }
+        this.goatHornCount = goatHornCount;
+        this.hasClosedFurPouch = hasClosedFurPouch;
+        this.hasOpenFurPouch = hasOpenFurPouch;
+        this.furPouchType = furPouchType;
+
     }
 
     public boolean isBankOpen()
