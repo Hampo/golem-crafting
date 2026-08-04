@@ -8,12 +8,15 @@ import net.runelite.api.MenuAction;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.events.MenuEntryAdded;
 import net.runelite.api.events.MenuOptionClicked;
 import net.runelite.api.events.VarbitChanged;
 import net.runelite.client.Notifier;
 import net.runelite.client.eventbus.Subscribe;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
 import org.zhbot.golem_crafting.enums.CardinalDirection;
+
+import java.awt.*;
 
 public abstract class Golem {
     public static final int RESPAWN_DELAY = 10;
@@ -122,6 +125,82 @@ public abstract class Golem {
 
         firstProgressTick = true;
         lastProgressTick = -RESPAWN_DELAY;
+    }
+
+    @Subscribe
+    public void onMenuEntryAdded(MenuEntryAdded event)
+    {
+        if (!config.plinthRemoveMenuOptions())
+            return;
+
+        var entry = event.getMenuEntry();
+        if (entry.getType() != MenuAction.GAME_OBJECT_FIRST_OPTION)
+            return;
+
+        var sceneX = entry.getParam0();
+        var sceneY = entry.getParam1();
+
+        var worldView = client.getTopLevelWorldView();
+        var worldPoint = WorldPoint.fromScene(worldView.getScene(), sceneX, sceneY, worldView.getPlane());
+
+        if (golemTile.distanceTo(worldPoint) != 0)
+            return;
+
+        var option = entry.getOption();
+        if (option.equalsIgnoreCase("Start-golem"))
+        {
+            var ticksSinceProgress = client.getTickCount() - lastProgressTick;
+            if (ticksSinceProgress < RESPAWN_DELAY)
+                client.getMenu().removeMenuEntry(entry);
+
+            return;
+        }
+
+        var localPlayer = client.getLocalPlayer();
+        if (localPlayer == null)
+            return;
+        var playerTile = localPlayer.getWorldLocation();
+
+        var side = CardinalDirection.NONE;
+        if (playerTile.distanceTo(northTile) == 0)
+            side = CardinalDirection.NORTH;
+        else if (playerTile.distanceTo(eastTile) == 0)
+            side = CardinalDirection.EAST;
+        else if (playerTile.distanceTo(southTile) == 0)
+            side = CardinalDirection.SOUTH;
+        else if (playerTile.distanceTo(westTile) == 0)
+            side = CardinalDirection.WEST;
+
+        if (side == CardinalDirection.NONE)
+            return;
+
+        switch (option)
+        {
+            case "Insert-core":
+                if (side != finalTile)
+                    client.getMenu().removeMenuEntry(entry);
+                break;
+            case "Shape-golem":
+                switch (side)
+                {
+                    case NORTH:
+                        if (isNorthDone())
+                            client.getMenu().removeMenuEntry(entry);
+                        break;
+                    case EAST:
+                        if (isEastDone())
+                            client.getMenu().removeMenuEntry(entry);
+                        break;
+                    case SOUTH:
+                        if (isSouthDone())
+                            client.getMenu().removeMenuEntry(entry);
+                        break;
+                    case WEST:
+                        if (isWestDone())
+                            client.getMenu().removeMenuEntry(entry);
+                        break;
+                }
+        }
     }
 
     public int getProgress()

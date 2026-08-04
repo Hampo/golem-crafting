@@ -465,6 +465,18 @@ public interface GolemCraftingConfig extends Config
 		return new Color(255, 0, 0, 75);
 	}
 
+	@ConfigItem(
+			keyName = "plinthRemoveMenuOptions",
+			name = "Remove Options on Invalid Tile",
+			description = "Remove menu options when stood on an invalid tile",
+			section = plinthSection,
+			position = 10
+	)
+	default boolean plinthRemoveMenuOptions()
+	{
+		return true;
+	}
+
 	@ConfigSection(
 			name = "Tiles",
 			description = "Configure tiles settings",
