@@ -89,6 +89,8 @@ public class FurPouch {
     private boolean hasClosedFurPouch = false;
     @Getter
     private FurPouchType furPouchType = FurPouchType.INVALID;
+    private int invFurCount = 0;
+    private int invSpaceCount = 0;
 
     @Inject
     private FurPouch(Client client, ConfigManager configManager, GolemCraftingPlugin plugin)
@@ -98,7 +100,10 @@ public class FurPouch {
         this.plugin = plugin;
 
         if (client.getGameState() == GameState.LOGGED_IN)
+        {
             hunterXP = client.getSkillExperience(Skill.HUNTER);
+            checkInventory(client.getItemContainer(InventoryID.INV));
+        }
     }
 
     public boolean hasFurPouch()
@@ -234,19 +239,16 @@ public class FurPouch {
         if (!ALL_POUCH_IDS.contains(itemId))
             return;
 
-        ItemContainer inventory = client.getItemContainer(InventoryID.INV);
-        if (inventory == null)
-            return;
-
         switch (event.getMenuOption())
         {
             case "Fill":
-                var furCount = 0;
-                for (var item : inventory.getItems())
-                    if (FUR_ITEM_IDS.contains(item.getId()))
-                        furCount++;
+                var count = getCount();
+                var capacity = getCapacity();
+                var space = capacity - count;
+                if (space < 1)
+                    return;
 
-                setCount(Math.min(getCapacity(), getCount() + furCount));
+                setCount(Math.min(capacity, count + invFurCount));
                 break;
             case "Empty":
                 if (isBankOpen())
@@ -255,12 +257,10 @@ public class FurPouch {
                     break;
                 }
 
-                var freeSpots = 0;
-                for (var item : inventory.getItems())
-                    if (item.getId() == -1)
-                        freeSpots++;
+                if (invSpaceCount < 1)
+                    return;
 
-                setCount(Math.max(0, getCount() - freeSpots));
+                setCount(Math.max(0, getCount() - invSpaceCount));
                 break;
             case "Empty-to-bank": // Item Charges Improved
                 setCount(0);
@@ -283,6 +283,7 @@ public class FurPouch {
             return;
 
         hunterXP = client.getSkillExperience(Skill.HUNTER);
+        checkInventory(client.getItemContainer(InventoryID.INV));
     }
 
     @Subscribe
@@ -332,14 +333,34 @@ public class FurPouch {
         if (event.getContainerId() != InventoryID.INV)
             return;
 
+        checkInventory(event.getItemContainer());
+    }
+
+    public boolean isBankOpen()
+    {
+        Widget bankWidget = client.getWidget(InterfaceID.BANKMAIN);
+
+        return bankWidget != null && !bankWidget.isHidden();
+    }
+
+    private void checkInventory(ItemContainer inventory)
+    {
+        if (inventory == null)
+            return;
+
+        var occupiedSlots = 0;
+
         var goatHornCount = 0;
+        var invFurCount = 0;
         var hasClosedFurPouch = false;
         var hasOpenFurPouch = false;
         var furPouchType = FurPouchType.INVALID;
-        for (var item : event.getItemContainer().getItems())
+        for (var item : inventory.getItems())
         {
-            if (item == null)
+            if (item == null || item.getId() == -1)
                 continue;
+
+            occupiedSlots++;
 
             switch (item.getId()) {
                 case ItemID.DESERT_GOAT_HORN:
@@ -369,19 +390,17 @@ public class FurPouch {
                     hasOpenFurPouch = true;
                     furPouchType = FurPouchType.LARGE;
                     break;
+                default:
+                    if (FUR_ITEM_IDS.contains(item.getId()))
+                        invFurCount++;
+                    break;
             }
         }
         this.goatHornCount = goatHornCount;
+        this.invFurCount = invFurCount;
+        this.invSpaceCount = 28 - occupiedSlots;
         this.hasClosedFurPouch = hasClosedFurPouch;
         this.hasOpenFurPouch = hasOpenFurPouch;
         this.furPouchType = furPouchType;
-
-    }
-
-    public boolean isBankOpen()
-    {
-        Widget bankWidget = client.getWidget(InterfaceID.BANKMAIN);
-
-        return bankWidget != null && !bankWidget.isHidden();
     }
 }
