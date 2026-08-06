@@ -55,7 +55,7 @@ public class FurPouch {
             ItemID.HUNTINGBEAST_SPEEDY_FUR,
             ItemID.HUNTINGBEAST_SILENT_FUR,
             ItemID.HUNTINGBEAST_SPEEDY2_FUR,
-            /*ItemID.GOAT_PIT_FUR*/34017
+            ItemID.GOAT_PIT_FUR
     );
 
     private static final Pattern FUR_POUCH_PATTERN = Pattern.compile("Your fur pouch is currently holding (\\d+) fur\\.");

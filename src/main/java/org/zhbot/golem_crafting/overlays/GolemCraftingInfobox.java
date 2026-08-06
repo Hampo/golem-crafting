@@ -3,6 +3,7 @@ package org.zhbot.golem_crafting.overlays;
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
@@ -17,8 +18,6 @@ import java.awt.*;
 import java.util.Locale;
 
 public class GolemCraftingInfobox extends OverlayPanel {
-    private static final int TOTAL_GOLEMS_ID = 15738;
-
     private final Client client;
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
@@ -54,7 +53,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
         {
             panelComponent.getChildren().add(LineComponent.builder()
                     .left("Total Golems:")
-                    .right(String.valueOf(client.getVarbitValue(TOTAL_GOLEMS_ID)))
+                    .right(String.valueOf(client.getVarbitValue(VarbitID.GOLEM_CRAFTING_COUNT)))
                     .build());
         }
 

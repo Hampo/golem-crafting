@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
+import net.runelite.api.gameval.AnimationID;
 import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.ItemID;
 import net.runelite.api.gameval.VarbitID;
@@ -45,12 +46,6 @@ public class GolemCraftingPlugin extends Plugin
 	private static final String REPEATED_ANGLE_MESSAGE = "You've already crafted this side of the golem.";
 	private static final Pattern TOTAL_GOLEMS_MESSAGE = Pattern.compile("You have crafted \\d+ golems on Wyrmscraig\\.");
 	public static final Pattern LOOT_MESSAGE = Pattern.compile("As you complete the golem it leaves a gift on the ground for you: (\\d+) x (.*)\\.");
-
-	private static final int CRAFTING_ANIMATION_ID = 14458;
-
-	private static final int SUNSTONE_ID = 34020;
-	private static final int SUNSTONE_CORE_ID = 34022;
-	private static final int JEWELLERS_CHISEL_ID = 34024;
 
 	@Inject
 	private Client client;
@@ -247,10 +242,10 @@ public class GolemCraftingPlugin extends Plugin
 				furCount++;
 		this.furCount = furCount;
 
-		hasChisel = inventory.contains(ItemID.CHISEL) || inventory.contains(JEWELLERS_CHISEL_ID);
+		hasChisel = inventory.contains(ItemID.CHISEL) || inventory.contains(ItemID.JEWELLERS_CHISEL);
 		hasHammer = inventory.contains(ItemID.HAMMER) || inventory.contains(ItemID.IMCANDO_HAMMER) || inventory.contains(ItemID.IMCANDO_HAMMER_OFFHAND);
-		sunstoneCount = inventory.count(SUNSTONE_ID);
-		sunstoneCoreCount = inventory.count(SUNSTONE_CORE_ID);
+		sunstoneCount = inventory.count(ItemID.SUNSTONE);
+		sunstoneCoreCount = inventory.count(ItemID.SUNSTONE_CORE);
 	}
 
 	@Provides
@@ -312,6 +307,6 @@ public class GolemCraftingPlugin extends Plugin
 
 	public boolean isCrafting()
 	{
-		return client.getLocalPlayer().getAnimation() == CRAFTING_ANIMATION_ID;
+		return client.getLocalPlayer().getAnimation() == AnimationID.HUMAN_GOLEM_CHISEL;
 	}
 }

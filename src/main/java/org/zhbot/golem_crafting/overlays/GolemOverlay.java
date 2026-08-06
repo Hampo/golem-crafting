@@ -1,6 +1,7 @@
 package org.zhbot.golem_crafting.overlays;
 
 import net.runelite.api.Client;
+import net.runelite.api.gameval.ItemID;
 import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
@@ -14,8 +15,6 @@ import org.zhbot.golem_crafting.utils.GraphicsUtils;
 import java.awt.*;
 
 public class GolemOverlay extends Overlay {
-    private static final int SUNSTONE_CORE_ID = 34022;
-
     private final Client client;
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
@@ -174,7 +173,7 @@ public class GolemOverlay extends Overlay {
         }
 
         if (isFinalStep && config.showOverlayPlinthCore())
-            graphicsUtils.renderItem(graphics, station, SUNSTONE_CORE_ID, config.overlayZOffset());
+            graphicsUtils.renderItem(graphics, station, ItemID.SUNSTONE_CORE, config.overlayZOffset());
         else if (!isFinalStep && currentSide != CardinalDirection.NONE && config.showProgressMode().isShowPlinth())
         {
             var currentProgress = 0f;

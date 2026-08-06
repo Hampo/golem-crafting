@@ -5,6 +5,7 @@ import net.runelite.api.Client;
 import net.runelite.api.GameState;
 import net.runelite.api.events.ChatMessage;
 import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.gameval.ObjectID;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
@@ -20,10 +21,9 @@ import java.awt.*;
 import java.util.Set;
 
 public class SunstoneOverlay extends Overlay {
-    private static final int SUNSTONE_MONOLITH_ID = 62216;
     private static final Set<Integer> SUNSTONE_ROCK_IDS = Set.of(
-            62393,
-            62394
+            ObjectID.SUNSTONEROCK1,
+            ObjectID.SUNSTONEROCK2
     );
 
     private static final String MINING_ROCK_MESSAGE = "You swing your pick at the rock.";
@@ -82,7 +82,7 @@ public class SunstoneOverlay extends Overlay {
                     if (gameObject == null)
                         continue;
 
-                    if (sunstoneMode == SunstoneMode.MONOLITH && gameObject.getId() == SUNSTONE_MONOLITH_ID)
+                    if (sunstoneMode == SunstoneMode.MONOLITH && gameObject.getId() == ObjectID.WYRMSCRAIG_SUNSTONE01)
                     {
                         graphicsUtils.renderObject(graphics, gameObject, config.overlaySunstoneRenderStyle(), config.overlaySunstoneColour());
                         return null;

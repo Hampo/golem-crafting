@@ -2,6 +2,7 @@ package org.zhbot.golem_crafting.overlays;
 
 import net.runelite.api.Client;
 import net.runelite.api.gameval.InventoryID;
+import net.runelite.api.gameval.ItemID;
 import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.LineComponent;
@@ -12,9 +13,6 @@ import javax.inject.Inject;
 import java.awt.*;
 
 public class ResourceWarningInfobox extends OverlayPanel {
-    private static final int SUNSTONE_ID = 34020;
-    private static final int SUNSTONE_CORE_ID = 34022;
-
     private final Client client;
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
@@ -86,7 +84,7 @@ public class ResourceWarningInfobox extends OverlayPanel {
 
         if (config.resourceInfoboxWarnSunstone())
         {
-            var sunstoneCount = inventory.count(SUNSTONE_ID);
+            var sunstoneCount = inventory.count(ItemID.SUNSTONE);
 
             if (sunstoneCount == 0)
             {
@@ -108,7 +106,7 @@ public class ResourceWarningInfobox extends OverlayPanel {
 
         if (config.resourceInfoboxWarnSunstoneCore())
         {
-            var sunstoneCoreCount = inventory.count(SUNSTONE_CORE_ID);
+            var sunstoneCoreCount = inventory.count(ItemID.SUNSTONE_CORE);
 
             if (sunstoneCoreCount == 0)
             {
