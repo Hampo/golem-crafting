@@ -60,7 +60,15 @@ public class ResourceWarningInfobox extends OverlayPanel {
             empty = true;
         }
 
-        if (config.resourceInfoboxWarnFur())
+        if (plugin.getFurPouch().hasFurPouch() && plugin.getFurPouch().getCount() == -1)
+        {
+            panelComponent.getChildren().add(LineComponent.builder()
+                    .left("Fur Pouch")
+                    .right("Unknown")
+                    .build());
+            empty = true;
+        }
+        else if (config.resourceInfoboxWarnFur())
         {
             var furCount = plugin.getTotalFurCount();
 
