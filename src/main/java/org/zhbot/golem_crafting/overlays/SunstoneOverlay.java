@@ -56,7 +56,7 @@ public class SunstoneOverlay extends Overlay {
         if (sunstoneMode == SunstoneMode.NONE)
             return null;
 
-        if (!plugin.isWithinGolemArea())
+        if (plugin.outsideGolemArea())
             return null;
 
         if (plugin.hasGolemMaterials())

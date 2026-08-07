@@ -17,7 +17,6 @@ import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.events.ConfigChanged;
-import net.runelite.client.game.ItemManager;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
@@ -64,9 +63,6 @@ public class GolemCraftingPlugin extends Plugin
 
 	@Inject
 	private OverlayManager overlayManager;
-
-	@Inject
-	private ItemManager itemManager;
 
 	@Inject
 	private FurPouchOverlay furPouchOverlay;
@@ -292,17 +288,17 @@ public class GolemCraftingPlugin extends Plugin
 		return false;
 	}
 
-	public boolean isWithinGolemArea()
+	public boolean outsideGolemArea()
 	{
 		var player = client.getLocalPlayer();
 		if (player == null)
-			return false;
-
-		if (config.debug())
 			return true;
 
+		if (config.debug())
+			return false;
+
 		var playerLocation = player.getWorldLocation();
-		return playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
+		return playerLocation.distanceTo(CENTER) > MAX_DISTANCE;
 	}
 
 	public boolean isCrafting()

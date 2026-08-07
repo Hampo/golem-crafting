@@ -30,7 +30,7 @@ public class ResourceWarningInfobox extends OverlayPanel {
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (!plugin.isWithinGolemArea())
+        if (plugin.outsideGolemArea())
             return null;
 
         var inventory = client.getItemContainer(InventoryID.INV);

@@ -41,7 +41,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
     @Override
     public Dimension render(Graphics2D graphics)
     {
-        if (!plugin.isWithinGolemArea())
+        if (plugin.outsideGolemArea())
             return super.render(graphics);
 
         panelComponent.getChildren().add(TitleComponent.builder()
