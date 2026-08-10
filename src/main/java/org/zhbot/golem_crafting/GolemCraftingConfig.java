@@ -340,7 +340,7 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigSection(
-			name = "Plinth",
+			name = "Plinth Overlays",
 			description = "Configure the plinth settings",
 			position = 3,
 			closedByDefault = true
