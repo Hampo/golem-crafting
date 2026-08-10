@@ -15,7 +15,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Notifications",
 			description = "Configure notifications",
-			position = 0
+			position = 0,
+			closedByDefault = true
 	)
 	String notificationsSection = "notificationsSection";
 
@@ -34,7 +35,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Infobox",
 			description = "Configure the infobox",
-			position = 1
+			position = 1,
+			closedByDefault = true
 	)
 	String infoboxSection = "infoboxSection";
 
@@ -173,7 +175,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Resource Warning Infobox",
 			description = "Configure the resource warning settings",
-			position = 2
+			position = 2,
+			closedByDefault = true
 	)
 	String resourceWarningSection = "resourceWarningSection";
 
@@ -339,7 +342,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Plinth",
 			description = "Configure the plinth settings",
-			position = 3
+			position = 3,
+			closedByDefault = true
 	)
 	String plinthSection = "plinthSection";
 
@@ -465,14 +469,58 @@ public interface GolemCraftingConfig extends Config
 		return new Color(255, 0, 0, 75);
 	}
 
+	@ConfigSection(
+			name = "Plinth Menu Options",
+			description = "Configure tiles settings",
+			position = 4,
+			closedByDefault = true
+	)
+	String plinthMenuOptionsSection = "plinthMenuOptionsSection";
+
 	@ConfigItem(
 			keyName = "plinthRemoveMenuOptions",
 			name = "Remove Options on Invalid Tile",
-			description = "Remove menu options when stood on an invalid tile",
-			section = plinthSection,
-			position = 10
+			description = "Remove menu options. Control specifics with the below settings",
+			section = plinthMenuOptionsSection,
+			position = 0
 	)
 	default boolean plinthRemoveMenuOptions()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "plinthRemoveMenuOptions",
+			name = "Remove Start Golem",
+			description = "Remove the Start-golem option when missing materials",
+			section = plinthMenuOptionsSection,
+			position = 1
+	)
+	default boolean plinthRemoveStartGolem()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "plinthRemoveMenuOptions",
+			name = "Remove Insert Core",
+			description = "Remove the Insert-core option when stood on an invalid tile",
+			section = plinthMenuOptionsSection,
+			position = 2
+	)
+	default boolean plinthRemoveInsertCore()
+	{
+		return true;
+	}
+
+	@ConfigItem(
+			keyName = "plinthRemoveMenuOptions",
+			name = "Remove Shape Golem",
+			description = "Remove the Shape-golem option when stood on an invalid tile",
+			section = plinthMenuOptionsSection,
+			position = 3
+	)
+	default boolean plinthRemoveShapeGolem()
 	{
 		return true;
 	}
@@ -480,7 +528,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Tiles",
 			description = "Configure tiles settings",
-			position = 4
+			position = 5,
+			closedByDefault = true
 	)
 	String tilesSection = "tilesSection";
 
@@ -537,7 +586,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Progress",
 			description = "Configure progress settings",
-			position = 5
+			position = 6,
+			closedByDefault = true
 	)
 	String progressSection = "progressSection";
 
@@ -569,7 +619,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Sunstone",
 			description = "Configure sunstone settings",
-			position = 6
+			position = 7,
+			closedByDefault = true
 	)
 	String sunstoneSection = "sunstoneSection";
 
@@ -635,7 +686,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Fur Pouch",
 			description = "Configure fur pouch settings",
-			position = 7
+			position = 8,
+			closedByDefault = true
 	)
 	String furPouchSection = "furPouchSection";
 
@@ -786,7 +838,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Game Chat",
 			description = "Configure game chat settings",
-			position = 8
+			position = 9,
+			closedByDefault = true
 	)
 	String gameChatSection = "gameChatSection";
 
@@ -853,7 +906,8 @@ public interface GolemCraftingConfig extends Config
 	@ConfigSection(
 			name = "Debug",
 			description = "Debug settings",
-			position = 9
+			position = 10,
+			closedByDefault = true
 	)
 	String debugSection = "debugSection";
 

@@ -152,6 +152,9 @@ public abstract class Golem {
         var option = entry.getOption();
         if (option.equalsIgnoreCase("Start-golem"))
         {
+            if (!config.plinthRemoveStartGolem())
+                return;
+
             if (!plugin.hasGolemMaterials()
                 || client.getTickCount() - lastProgressTick < RESPAWN_DELAY)
                 client.getMenu().removeMenuEntry(entry);
@@ -180,10 +183,17 @@ public abstract class Golem {
         switch (option)
         {
             case "Insert-core":
+                if (!config.plinthRemoveInsertCore())
+                    return;
+
                 if (side != finalTile)
                     client.getMenu().removeMenuEntry(entry);
+
                 break;
             case "Shape-golem":
+                if (!config.plinthRemoveShapeGolem())
+                    return;
+
                 switch (side)
                 {
                     case NORTH:
