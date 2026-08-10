@@ -800,23 +800,11 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "overlayFurPouchUnknownTextColour",
-			name = "Unknown Text Colour",
-			description = "The text colour for when the fur pouch contents are unknown",
-			section = furPouchSection,
-			position = 9
-	)
-	default Color overlayFurPouchUnknownTextColour()
-	{
-		return new Color(255, 255, 0);
-	}
-
-	@ConfigItem(
 			keyName = "overlayFurPouchLowTextColour",
 			name = "Low Text Colour",
 			description = "The text colour for when the fur pouch contents are low",
 			section = furPouchSection,
-			position = 10
+			position = 9
 	)
 	default Color overlayFurPouchLowTextColour()
 	{
@@ -828,11 +816,23 @@ public interface GolemCraftingConfig extends Config
 			name = "Empty Text Colour",
 			description = "The text colour for when the fur pouch is empty",
 			section = furPouchSection,
-			position = 11
+			position = 10
 	)
 	default Color overlayFurPouchEmptyTextColour()
 	{
 		return new Color(255, 0, 0);
+	}
+
+	@ConfigItem(
+			keyName = "overlayFurPouchUnknownTextColour",
+			name = "Unknown Text Colour",
+			description = "The text colour for when the fur pouch contents are unknown",
+			section = furPouchSection,
+			position = 10
+	)
+	default Color overlayFurPouchUnknownTextColour()
+	{
+		return new Color(255, 255, 0);
 	}
 
 	@ConfigSection(
