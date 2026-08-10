@@ -165,9 +165,8 @@ public abstract class Golem {
         var worldView = client.getTopLevelWorldView();
         var worldPoint = WorldPoint.fromScene(worldView.getScene(), sceneX, sceneY, worldView.getPlane());
 
-        if (golemTile.distanceTo(worldPoint) != 0) {
+        if (golemTile.distanceTo(worldPoint) != 0)
             return;
-        }
 
         if (option.equalsIgnoreCase("Start-golem"))
         {
