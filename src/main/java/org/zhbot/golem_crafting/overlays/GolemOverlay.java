@@ -51,7 +51,7 @@ public class GolemOverlay extends Overlay {
             var ticksSinceProgress = client.getTickCount() - golem.getLastProgressTick();
             if (ticksSinceProgress < Golem.RESPAWN_DELAY)
             {
-                graphicsUtils.renderPie(graphics, station.getCanvasLocation(0), (float)ticksSinceProgress / Golem.RESPAWN_DELAY, Color.ORANGE);
+                graphicsUtils.renderPie(graphics, station.getCanvasLocation(0), (double)ticksSinceProgress / Golem.RESPAWN_DELAY, Color.ORANGE);
             }
             else
             {
@@ -176,7 +176,7 @@ public class GolemOverlay extends Overlay {
             graphicsUtils.renderItem(graphics, station, ItemID.SUNSTONE_CORE, config.overlayZOffset());
         else if (!isFinalStep && currentSide != CardinalDirection.NONE && config.showProgressMode().isShowPlinth())
         {
-            var currentProgress = 0f;
+            var currentProgress = 0d;
             switch (currentSide)
             {
                 case NORTH:

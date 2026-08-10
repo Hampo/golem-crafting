@@ -67,7 +67,7 @@ public class GraphicsUtils {
         OverlayUtil.renderHoverableArea(graphics, area, mousePosition, color, borderColour, borderColour.darker());
     }
 
-    public void renderPie(Graphics2D graphics, WorldPoint worldPoint, float progress, Color color)
+    public void renderPie(Graphics2D graphics, WorldPoint worldPoint, double progress, Color color)
     {
         if (worldPoint == null)
             return;
@@ -83,7 +83,7 @@ public class GraphicsUtils {
         renderPie(graphics, point, progress, color);
     }
 
-    public void renderPie(Graphics2D graphics, GameObject gameObject, float progress, Color color, int zOffset)
+    public void renderPie(Graphics2D graphics, GameObject gameObject, double progress, Color color, int zOffset)
     {
         if (gameObject == null)
             return;
@@ -97,7 +97,7 @@ public class GraphicsUtils {
         renderPie(graphics, point, progress, color);
     }
 
-    public void renderPie(Graphics2D graphics, Point position, float progress, Color color)
+    public void renderPie(Graphics2D graphics, Point position, double progress, Color color)
     {
         ProgressPieComponent pie = new ProgressPieComponent();
         pie.setPosition(position);

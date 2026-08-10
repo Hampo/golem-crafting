@@ -250,13 +250,13 @@ public abstract class Golem {
         return client.getVarbitValue(westStateID) != 0;
     }
 
-    public float getNorthProgress() { return (float)client.getVarbitValue(northProgressID) / MAX_PROGRESS; }
+    public double getNorthProgress() { return (double)client.getVarbitValue(northProgressID) / MAX_PROGRESS; }
 
-    public float getEastProgress() { return (float)client.getVarbitValue(eastProgressID) / MAX_PROGRESS; }
+    public double getEastProgress() { return (double)client.getVarbitValue(eastProgressID) / MAX_PROGRESS; }
 
-    public float getSouthProgress() { return (float)client.getVarbitValue(southProgressID) / MAX_PROGRESS; }
+    public double getSouthProgress() { return (double)client.getVarbitValue(southProgressID) / MAX_PROGRESS; }
 
-    public float getWestProgress() { return (float)client.getVarbitValue(westProgressID) / MAX_PROGRESS; }
+    public double getWestProgress() { return (double)client.getVarbitValue(westProgressID) / MAX_PROGRESS; }
 
     public WorldPoint getFinalTile() {
         switch (finalTile)
