@@ -490,7 +490,7 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "plinthRemoveMenuOptions",
+			keyName = "plinthRemoveStartGolem",
 			name = "Remove Start Golem",
 			description = "Remove the Start-golem option when missing materials",
 			section = plinthMenuOptionsSection,
@@ -502,7 +502,7 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "plinthRemoveMenuOptions",
+			keyName = "plinthRemoveInsertCore",
 			name = "Remove Insert Core",
 			description = "Remove the Insert-core option when stood on an invalid tile",
 			section = plinthMenuOptionsSection,
@@ -514,7 +514,7 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "plinthRemoveMenuOptions",
+			keyName = "plinthRemoveShapeGolem",
 			name = "Remove Shape Golem",
 			description = "Remove the Shape-golem option when stood on an invalid tile",
 			section = plinthMenuOptionsSection,
