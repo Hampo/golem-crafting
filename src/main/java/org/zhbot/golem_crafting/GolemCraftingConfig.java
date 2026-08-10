@@ -479,7 +479,7 @@ public interface GolemCraftingConfig extends Config
 
 	@ConfigItem(
 			keyName = "plinthRemoveMenuOptions",
-			name = "Remove Options on Invalid Tile",
+			name = "Remove Options",
 			description = "Remove menu options. Control specifics with the below settings",
 			section = plinthMenuOptionsSection,
 			position = 0
