@@ -502,25 +502,25 @@ public interface GolemCraftingConfig extends Config
 	}
 
 	@ConfigItem(
-			keyName = "plinthRemoveInsertCore",
-			name = "Remove Insert Core",
-			description = "Remove the Insert-core option when stood on an invalid tile",
+			keyName = "plinthRemoveShapeGolem",
+			name = "Remove Shape Golem",
+			description = "Remove the Shape-golem option when stood on an invalid tile",
 			section = plinthMenuOptionsSection,
 			position = 2
 	)
-	default boolean plinthRemoveInsertCore()
+	default boolean plinthRemoveShapeGolem()
 	{
 		return true;
 	}
 
 	@ConfigItem(
-			keyName = "plinthRemoveShapeGolem",
-			name = "Remove Shape Golem",
-			description = "Remove the Shape-golem option when stood on an invalid tile",
+			keyName = "plinthRemoveInsertCore",
+			name = "Remove Insert Core",
+			description = "Remove the Insert-core option when stood on an invalid tile",
 			section = plinthMenuOptionsSection,
 			position = 3
 	)
-	default boolean plinthRemoveShapeGolem()
+	default boolean plinthRemoveInsertCore()
 	{
 		return true;
 	}

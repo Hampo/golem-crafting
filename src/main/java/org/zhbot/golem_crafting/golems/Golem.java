@@ -140,21 +140,37 @@ public abstract class Golem {
         if (entry.getType() != MenuAction.GAME_OBJECT_FIRST_OPTION)
             return;
 
+        var option = entry.getOption();
+        switch (option)
+        {
+            case "Start-golem":
+                if (!config.plinthRemoveStartGolem())
+                    return;
+                break;
+            case "Shape-golem":
+                if (!config.plinthRemoveShapeGolem())
+                    return;
+                break;
+            case "Insert-core":
+                if (!config.plinthRemoveInsertCore())
+                    return;
+                break;
+            default:
+                return;
+        }
+
         var sceneX = entry.getParam0();
         var sceneY = entry.getParam1();
 
         var worldView = client.getTopLevelWorldView();
         var worldPoint = WorldPoint.fromScene(worldView.getScene(), sceneX, sceneY, worldView.getPlane());
 
-        if (golemTile.distanceTo(worldPoint) != 0)
+        if (golemTile.distanceTo(worldPoint) != 0) {
             return;
+        }
 
-        var option = entry.getOption();
         if (option.equalsIgnoreCase("Start-golem"))
         {
-            if (!config.plinthRemoveStartGolem())
-                return;
-
             if (!plugin.hasGolemMaterials()
                 || client.getTickCount() - lastProgressTick < RESPAWN_DELAY)
                 client.getMenu().removeMenuEntry(entry);
@@ -183,17 +199,11 @@ public abstract class Golem {
         switch (option)
         {
             case "Insert-core":
-                if (!config.plinthRemoveInsertCore())
-                    return;
-
                 if (side != finalTile)
                     client.getMenu().removeMenuEntry(entry);
 
                 break;
             case "Shape-golem":
-                if (!config.plinthRemoveShapeGolem())
-                    return;
-
                 switch (side)
                 {
                     case NORTH:
