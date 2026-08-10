@@ -9,6 +9,7 @@ import net.runelite.api.gameval.InterfaceID;
 import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.ItemID;
 import net.runelite.api.widgets.Widget;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.util.Text;
@@ -93,7 +94,7 @@ public class FurPouch {
     private int invSpaceCount = 0;
 
     @Inject
-    private FurPouch(Client client, ConfigManager configManager, GolemCraftingPlugin plugin)
+    private FurPouch(Client client, ClientThread clientThread, ConfigManager configManager, GolemCraftingPlugin plugin)
     {
         this.client = client;
         this.configManager = configManager;
@@ -101,8 +102,11 @@ public class FurPouch {
 
         if (client.getGameState() == GameState.LOGGED_IN)
         {
-            hunterXP = client.getSkillExperience(Skill.HUNTER);
-            checkInventory(client.getItemContainer(InventoryID.INV));
+            clientThread.invoke(() ->
+            {
+                hunterXP = client.getSkillExperience(Skill.HUNTER);
+                checkInventory(client.getItemContainer(InventoryID.INV));
+            });
         }
     }
 
