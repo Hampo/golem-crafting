@@ -279,13 +279,13 @@ public class GolemCraftingPlugin extends Plugin
 		return furPouchCount + furCount;
 	}
 
-	public boolean isAnyGolemActive()
+	public Golem getActiveGolem()
 	{
 		for (var golem : golems)
 			if (golem.getProgress() > 0)
-				return true;
+				return golem;
 
-		return false;
+		return null;
 	}
 
 	public boolean outsideGolemArea()

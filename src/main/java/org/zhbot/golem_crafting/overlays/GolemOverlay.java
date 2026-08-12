@@ -9,6 +9,7 @@ import net.runelite.client.ui.overlay.OverlayPosition;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
 import org.zhbot.golem_crafting.GolemCraftingPlugin;
 import org.zhbot.golem_crafting.enums.CardinalDirection;
+import org.zhbot.golem_crafting.enums.TileMode;
 import org.zhbot.golem_crafting.golems.Golem;
 import org.zhbot.golem_crafting.utils.GraphicsUtils;
 
@@ -42,9 +43,14 @@ public class GolemOverlay extends Overlay {
             if (!plugin.hasGolemMaterials())
                 return null;
 
-            // TODO: Maybe render start tile blue when other golem on final step
-            if (plugin.isAnyGolemActive())
+            var activeGolem = plugin.getActiveGolem();
+            if (activeGolem != null)
+            {
+                if (activeGolem.getProgress() == 5 && tileMode.isShowOptimal())
+                    graphicsUtils.renderTile(graphics, golem.getStartTile(), config.overlayTileNextOptimalColour());
+
                 return null;
+            }
 
             var station = golem.getStationGameObject();
             if (station == null)
@@ -61,7 +67,7 @@ public class GolemOverlay extends Overlay {
                     graphicsUtils.renderObject(graphics, station, config.overlayPlinthRenderStyle(), config.overlayPlinthValidColour());
 
                 if (tileMode.isShowOptimal())
-                    graphicsUtils.renderTile(graphics, golem.getStartTile(), config.overlayTileColour());
+                    graphicsUtils.renderTile(graphics, golem.getStartTile(), config.overlayTileOptimalColour());
             }
 
             return null;
@@ -95,8 +101,10 @@ public class GolemOverlay extends Overlay {
                 }
 
                 if (tileMode.isShowOptimal() && nextOptimalSide == CardinalDirection.NORTH)
+                    graphicsUtils.renderTile(graphics, golem.getNorthTile(), config.overlayTileNextOptimalColour());
+                else if (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.NORTH)
                     graphicsUtils.renderTile(graphics, golem.getNorthTile(), config.overlayTileOptimalColour());
-                else if (tileMode.isShowIncomplete() || (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.NORTH))
+                else if (tileMode.isShowIncomplete())
                     graphicsUtils.renderTile(graphics, golem.getNorthTile(), config.overlayTileColour());
 
                 if (config.showProgressMode().isShowTiles())
@@ -116,8 +124,10 @@ public class GolemOverlay extends Overlay {
                 }
 
                 if (tileMode.isShowOptimal() && nextOptimalSide == CardinalDirection.EAST)
+                    graphicsUtils.renderTile(graphics, golem.getEastTile(), config.overlayTileNextOptimalColour());
+                else if (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.EAST)
                     graphicsUtils.renderTile(graphics, golem.getEastTile(), config.overlayTileOptimalColour());
-                else if (tileMode.isShowIncomplete() || (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.EAST))
+                else if (tileMode.isShowIncomplete())
                     graphicsUtils.renderTile(graphics, golem.getEastTile(), config.overlayTileColour());
 
                 if (config.showProgressMode().isShowTiles())
@@ -137,8 +147,10 @@ public class GolemOverlay extends Overlay {
                 }
 
                 if (tileMode.isShowOptimal() && nextOptimalSide == CardinalDirection.SOUTH)
+                    graphicsUtils.renderTile(graphics, golem.getSouthTile(), config.overlayTileNextOptimalColour());
+                else if (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.SOUTH)
                     graphicsUtils.renderTile(graphics, golem.getSouthTile(), config.overlayTileOptimalColour());
-                else if (tileMode.isShowIncomplete() || (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.SOUTH))
+                else if (tileMode.isShowIncomplete())
                     graphicsUtils.renderTile(graphics, golem.getSouthTile(), config.overlayTileColour());
 
                 if (config.showProgressMode().isShowTiles())
@@ -158,8 +170,10 @@ public class GolemOverlay extends Overlay {
                 }
 
                 if (tileMode.isShowOptimal() && nextOptimalSide == CardinalDirection.WEST)
+                    graphicsUtils.renderTile(graphics, golem.getWestTile(), config.overlayTileNextOptimalColour());
+                else if (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.WEST)
                     graphicsUtils.renderTile(graphics, golem.getWestTile(), config.overlayTileOptimalColour());
-                else if (tileMode.isShowIncomplete() || (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.WEST))
+                else if (tileMode.isShowIncomplete())
                     graphicsUtils.renderTile(graphics, golem.getWestTile(), config.overlayTileColour());
 
                 if (config.showProgressMode().isShowTiles())

@@ -598,12 +598,25 @@ public interface GolemCraftingConfig extends Config
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayTileOptimalColour",
-			name = "Next Optimal Colour",
-			description = "The highlight colour for the next optimal tile",
+			name = "Optimal Colour",
+			description = "The highlight colour for the current optimal tile",
 			section = tilesSection,
 			position = 5
 	)
 	default Color overlayTileOptimalColour()
+	{
+		return Color.GREEN;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "overlayTileNextOptimalColour",
+			name = "Next Optimal Colour",
+			description = "The highlight colour for the next optimal tile",
+			section = tilesSection,
+			position = 6
+	)
+	default Color overlayTileNextOptimalColour()
 	{
 		return Color.BLUE;
 	}
@@ -613,7 +626,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Show Golem on Insert Core",
 			description = "Highlight the golem tile when on the Insert Core stage",
 			section = tilesSection,
-			position = 6
+			position = 7
 	)
 	default boolean showOverlayGolemOnInsertCore()
 	{
@@ -626,7 +639,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Insert Core Colour",
 			description = "The highlight colour for the golem tile when on the Insert Core stage",
 			section = tilesSection,
-			position = 7
+			position = 8
 	)
 	default Color overlayTileGolemOnInsertColour()
 	{
