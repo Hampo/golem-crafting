@@ -16,6 +16,7 @@ import net.runelite.client.eventbus.Subscribe;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
 import org.zhbot.golem_crafting.GolemCraftingPlugin;
 import org.zhbot.golem_crafting.enums.CardinalDirection;
+import org.zhbot.golem_crafting.enums.StartDirection;
 
 import java.awt.*;
 
@@ -23,10 +24,10 @@ public abstract class Golem {
     public static final int RESPAWN_DELAY = 10;
     private static final int MAX_PROGRESS = 10;
 
-    private final Client client;
-    private final Notifier notifier;
-    private final GolemCraftingPlugin plugin;
-    private final GolemCraftingConfig config;
+    protected final Client client;
+    protected final Notifier notifier;
+    protected final GolemCraftingPlugin plugin;
+    protected final GolemCraftingConfig config;
 
     @Getter
     private final String name;
@@ -89,6 +90,8 @@ public abstract class Golem {
         this.westTile = new WorldPoint(golemTile.getX() - 1, golemTile.getY(), golemTile.getPlane());
         this.finalTile = finalTile;
     }
+
+    public abstract StartDirection getStartDirection();
 
     @Subscribe
     public void onVarbitChanged(VarbitChanged event)
@@ -250,6 +253,21 @@ public abstract class Golem {
         return client.getVarbitValue(westStateID) != 0;
     }
 
+    private boolean isDone(CardinalDirection direction) {
+        switch (direction) {
+            case NORTH:
+                return isNorthDone();
+            case EAST:
+                return isEastDone();
+            case SOUTH:
+                return isSouthDone();
+            case WEST:
+                return isWestDone();
+            default:
+                return false;
+        }
+    }
+
     public double getNorthProgress() { return (double)client.getVarbitValue(northProgressID) / MAX_PROGRESS; }
 
     public double getEastProgress() { return (double)client.getVarbitValue(eastProgressID) / MAX_PROGRESS; }
@@ -272,6 +290,61 @@ public abstract class Golem {
         }
 
         return null;
+    }
+
+    private static final CardinalDirection[] ROTATIONAL_DIRECTIONS = {
+            CardinalDirection.NORTH,
+            CardinalDirection.EAST,
+            CardinalDirection.SOUTH,
+            CardinalDirection.WEST
+    };
+
+    private CardinalDirection findOptimalSide(int skipCompletedCount) {
+        var start = getStartDirection().getDirection();
+
+        if (start == CardinalDirection.NONE || finalTile == CardinalDirection.NONE)
+            return CardinalDirection.NONE;
+
+        var startIndex = start.ordinal();
+        var finalIndex = finalTile.ordinal();
+
+        var step = isClockwise(startIndex, finalIndex) ? 1 : 3;
+
+        var remainingSkips = skipCompletedCount;
+
+        for (var i = 0; i < 4; i++) {
+            var targetIndex = (startIndex + (i * step)) % 4;
+            var side = ROTATIONAL_DIRECTIONS[targetIndex];
+
+            if (!isDone(side)) {
+                if (remainingSkips == 0)
+                    return side;
+
+                remainingSkips--;
+            }
+        }
+
+        return CardinalDirection.NONE;
+    }
+
+    private boolean isClockwise(int startIndex, int finalIndex) {
+        if (finalIndex == -1)
+            return true;
+
+        int cwDistance = (finalIndex - startIndex + 4) % 4;
+        int ccwDistance = (startIndex - finalIndex + 4) % 4;
+
+        return cwDistance >= ccwDistance;
+    }
+
+    public CardinalDirection getCurrentOptimalSide()
+    {
+        return findOptimalSide(0);
+    }
+
+    public CardinalDirection getNextOptimalSide()
+    {
+        return findOptimalSide(1);
     }
 
     public GameObject getStationGameObject()

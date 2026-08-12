@@ -68,13 +68,16 @@ public class GolemOverlay extends Overlay {
         var playerLocation = player.getWorldLocation();
         var onValidTile = false;
 
+        var tileMode = config.showTilesMode();
+        var currentOptimalSide = golem.getCurrentOptimalSide();
+        var nextOptimalSide = golem.getNextOptimalSide();
         var currentSide = CardinalDirection.NONE;
         var isFinalStep = progress == 5;
         if (isFinalStep)
         {
             onValidTile = playerLocation.distanceTo(golem.getFinalTile()) == 0;
 
-            if (config.showOverlayTiles())
+            if (tileMode.isShowIncomplete() || tileMode.isShowOptimal())
                 graphicsUtils.renderTile(graphics, golem.getFinalTile(), config.overlayTileColour());
         }
         else
@@ -87,13 +90,15 @@ public class GolemOverlay extends Overlay {
                     currentSide = CardinalDirection.NORTH;
                 }
 
-                if (config.showOverlayTiles())
+                if (tileMode.isShowIncomplete() || (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.NORTH))
                     graphicsUtils.renderTile(graphics, golem.getNorthTile(), config.overlayTileColour());
+                else if (tileMode.isShowOptimal() && nextOptimalSide == CardinalDirection.NORTH)
+                    graphicsUtils.renderTile(graphics, golem.getNorthTile(), config.overlayTileOptimalColour());
 
                 if (config.showProgressMode().isShowTiles())
                     graphicsUtils.renderPie(graphics, golem.getNorthTile(), golem.getNorthProgress(), config.overlayProgressColour());
             }
-            else if (config.showOverlayCompleteTiles())
+            else if (tileMode.isShowComplete())
             {
                 graphicsUtils.renderTile(graphics, golem.getNorthTile(), config.overlayTileCompleteColour());
             }
@@ -106,13 +111,15 @@ public class GolemOverlay extends Overlay {
                     currentSide = CardinalDirection.EAST;
                 }
 
-                if (config.showOverlayTiles())
+                if (tileMode.isShowIncomplete() || (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.EAST))
                     graphicsUtils.renderTile(graphics, golem.getEastTile(), config.overlayTileColour());
+                else if (tileMode.isShowOptimal() && nextOptimalSide == CardinalDirection.EAST)
+                    graphicsUtils.renderTile(graphics, golem.getEastTile(), config.overlayTileOptimalColour());
 
                 if (config.showProgressMode().isShowTiles())
                     graphicsUtils.renderPie(graphics, golem.getEastTile(), golem.getEastProgress(), config.overlayProgressColour());
             }
-            else if (config.showOverlayCompleteTiles())
+            else if (tileMode.isShowComplete())
             {
                 graphicsUtils.renderTile(graphics, golem.getEastTile(), config.overlayTileCompleteColour());
             }
@@ -125,13 +132,15 @@ public class GolemOverlay extends Overlay {
                     currentSide = CardinalDirection.SOUTH;
                 }
 
-                if (config.showOverlayTiles())
+                if (tileMode.isShowIncomplete() || (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.SOUTH))
                     graphicsUtils.renderTile(graphics, golem.getSouthTile(), config.overlayTileColour());
+                else if (tileMode.isShowOptimal() && nextOptimalSide == CardinalDirection.SOUTH)
+                    graphicsUtils.renderTile(graphics, golem.getSouthTile(), config.overlayTileOptimalColour());
 
                 if (config.showProgressMode().isShowTiles())
                     graphicsUtils.renderPie(graphics, golem.getSouthTile(), golem.getSouthProgress(), config.overlayProgressColour());
             }
-            else if (config.showOverlayCompleteTiles())
+            else if (tileMode.isShowComplete())
             {
                 graphicsUtils.renderTile(graphics, golem.getSouthTile(), config.overlayTileCompleteColour());
             }
@@ -144,13 +153,15 @@ public class GolemOverlay extends Overlay {
                     currentSide = CardinalDirection.WEST;
                 }
 
-                if (config.showOverlayTiles())
+                if (tileMode.isShowIncomplete() || (tileMode.isShowOptimal() && currentOptimalSide == CardinalDirection.WEST))
                     graphicsUtils.renderTile(graphics, golem.getWestTile(), config.overlayTileColour());
+                else if (tileMode.isShowOptimal() && nextOptimalSide == CardinalDirection.WEST)
+                    graphicsUtils.renderTile(graphics, golem.getWestTile(), config.overlayTileOptimalColour());
 
                 if (config.showProgressMode().isShowTiles())
                     graphicsUtils.renderPie(graphics, golem.getWestTile(), golem.getWestProgress(), config.overlayProgressColour());
             }
-            else if (config.showOverlayCompleteTiles())
+            else if (tileMode.isShowComplete())
             {
                 graphicsUtils.renderTile(graphics, golem.getWestTile(), config.overlayTileCompleteColour());
             }
