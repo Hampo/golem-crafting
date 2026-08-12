@@ -535,7 +535,7 @@ public interface GolemCraftingConfig extends Config
 
 	@ConfigItem(
 			keyName = "showTilesMode",
-			name = "Show Progress",
+			name = "Mode",
 			description = "Which tiles to highlight",
 			section = tilesSection,
 			position = 0

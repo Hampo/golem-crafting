@@ -8,6 +8,7 @@ public enum TileMode {
     ALL("All", true, true, false),
     ALL_WITH_OPTIMAL("All w/ Optimal", true, true, true),
     INCOMPLETE("Incomplete", false, true, false),
+    INCOMPLETE_WITH_OPTIMAL("Incomplete w/ Optimal", false, true, true),
     OPTIMAL("Optimal", false, false, true);
 
     private final String name;
