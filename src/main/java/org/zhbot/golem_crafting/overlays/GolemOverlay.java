@@ -35,12 +35,14 @@ public class GolemOverlay extends Overlay {
 
     @Override
     public Dimension render(Graphics2D graphics) {
+        var tileMode = config.showTilesMode();
         var progress = golem.getProgress();
         if (progress == 0)
         {
             if (!plugin.hasGolemMaterials())
                 return null;
 
+            // TODO: Maybe render start tile blue when other golem on final step
             if (plugin.isAnyGolemActive())
                 return null;
 
@@ -57,6 +59,9 @@ public class GolemOverlay extends Overlay {
             {
                 if (config.showOverlayPlinth())
                     graphicsUtils.renderObject(graphics, station, config.overlayPlinthRenderStyle(), config.overlayPlinthValidColour());
+
+                if (tileMode.isShowOptimal())
+                    graphicsUtils.renderTile(graphics, golem.getStartTile(), config.overlayTileColour());
             }
 
             return null;
@@ -68,7 +73,6 @@ public class GolemOverlay extends Overlay {
         var playerLocation = player.getWorldLocation();
         var onValidTile = false;
 
-        var tileMode = config.showTilesMode();
         var currentOptimalSide = golem.getCurrentOptimalSide();
         var nextOptimalSide = golem.getNextOptimalSide();
         var currentSide = CardinalDirection.NONE;

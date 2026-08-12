@@ -292,6 +292,18 @@ public abstract class Golem {
         return null;
     }
 
+    public WorldPoint getStartTile() {
+        switch (getStartDirection())
+        {
+            case EAST:
+                return eastTile;
+            case WEST:
+                return westTile;
+        }
+
+        return null;
+    }
+
     private static final CardinalDirection[] ROTATIONAL_DIRECTIONS = {
             CardinalDirection.NORTH,
             CardinalDirection.EAST,
