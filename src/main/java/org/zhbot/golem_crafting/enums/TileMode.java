@@ -6,6 +6,7 @@ import lombok.Getter;
 public enum TileMode {
     NONE("None", false, false, false),
     ALL("All", true, true, false),
+    ALL_WITH_OPTIMAL("All w/ Optimal", true, true, true),
     INCOMPLETE("Incomplete", false, true, false),
     OPTIMAL("Optimal", false, false, true);
 
