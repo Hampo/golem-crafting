@@ -366,7 +366,9 @@ public interface GolemCraftingConfig extends Config
 			section = plinthSection,
 			position = 1
 	)
-	default RenderMode overlayPlinthRenderStyle() { return RenderMode.CLICKBOX; }
+	default RenderMode overlayPlinthRenderStyle() {
+		return RenderMode.HULL;
+	}
 
 	@ConfigItem(
 			keyName = "overlayPlinthEfficiency",
@@ -625,7 +627,7 @@ public interface GolemCraftingConfig extends Config
 	)
 	default ProgressMode showProgressMode()
 	{
-		return ProgressMode.BOTH;
+		return ProgressMode.PLINTH;
 	}
 
 	@Alpha
