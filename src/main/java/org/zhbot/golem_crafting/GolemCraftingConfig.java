@@ -547,7 +547,7 @@ public interface GolemCraftingConfig extends Config
 
 	@ConfigItem(
 			keyName = "northGolemStartDirection",
-			name = "North Golem Start",
+			name = "North Golem Start Side",
 			description = "Which side of the northern golem is your preferred starting side",
 			section = tilesSection,
 			position = 1
@@ -559,7 +559,7 @@ public interface GolemCraftingConfig extends Config
 
 	@ConfigItem(
 			keyName = "southGolemStartDirection",
-			name = "South Golem Start",
+			name = "South Golem Start Side",
 			description = "Which side of the southern golem is your preferred starting side",
 			section = tilesSection,
 			position = 2
@@ -598,7 +598,7 @@ public interface GolemCraftingConfig extends Config
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayTileOptimalColour",
-			name = "Optimal Colour",
+			name = "Next Optimal Colour",
 			description = "The highlight colour for the next optimal tile",
 			section = tilesSection,
 			position = 5
