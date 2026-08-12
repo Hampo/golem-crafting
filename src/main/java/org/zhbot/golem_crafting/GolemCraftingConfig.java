@@ -600,7 +600,7 @@ public interface GolemCraftingConfig extends Config
 	@Alpha
 	@ConfigItem(
 			keyName = "overlayTileGolemOnInsertColour",
-			name = "Complete Colour",
+			name = "Insert Core Colour",
 			description = "The highlight colour for the golem tile when on the Insert Core stage",
 			section = tilesSection,
 			position = 5
