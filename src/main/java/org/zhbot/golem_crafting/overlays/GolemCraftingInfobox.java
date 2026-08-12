@@ -167,8 +167,8 @@ public class GolemCraftingInfobox extends OverlayPanel {
         if (!lootMatcher.matches())
             return;
 
-        var lootAmount = Integer.parseInt(lootMatcher.group(1));
-        var loot = lootMatcher.group(2).toLowerCase(Locale.ROOT);
+        var lootAmount = Integer.parseInt(lootMatcher.group(2));
+        var loot = lootMatcher.group(3).toLowerCase(Locale.ROOT);
 
         switch (loot)
         {

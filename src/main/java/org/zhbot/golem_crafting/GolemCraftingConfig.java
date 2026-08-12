@@ -1,9 +1,7 @@
 package org.zhbot.golem_crafting;
 
 import net.runelite.client.config.*;
-import org.zhbot.golem_crafting.enums.ProgressMode;
-import org.zhbot.golem_crafting.enums.RenderMode;
-import org.zhbot.golem_crafting.enums.SunstoneMode;
+import org.zhbot.golem_crafting.enums.*;
 
 import java.awt.*;
 
@@ -536,15 +534,39 @@ public interface GolemCraftingConfig extends Config
 	String tilesSection = "tilesSection";
 
 	@ConfigItem(
-			keyName = "overlayTiles",
-			name = "Show Incomplete",
-			description = "Highlight the incomplete tiles",
+			keyName = "showTilesMode",
+			name = "Mode",
+			description = "Which tiles to highlight",
 			section = tilesSection,
 			position = 0
 	)
-	default boolean showOverlayTiles()
+	default TileMode showTilesMode()
 	{
-		return true;
+		return TileMode.INCOMPLETE;
+	}
+
+	@ConfigItem(
+			keyName = "northGolemStartDirection",
+			name = "North Golem Start Side",
+			description = "Which side of the northern golem is your preferred starting side",
+			section = tilesSection,
+			position = 1
+	)
+	default StartDirection northGolemStartDirection()
+	{
+		return StartDirection.WEST;
+	}
+
+	@ConfigItem(
+			keyName = "southGolemStartDirection",
+			name = "South Golem Start Side",
+			description = "Which side of the southern golem is your preferred starting side",
+			section = tilesSection,
+			position = 2
+	)
+	default StartDirection southGolemStartDirection()
+	{
+		return StartDirection.EAST;
 	}
 
 	@Alpha
@@ -553,23 +575,11 @@ public interface GolemCraftingConfig extends Config
 			name = "Incomplete Colour",
 			description = "The highlight colour for incomplete tiles",
 			section = tilesSection,
-			position = 1
+			position = 3
 	)
 	default Color overlayTileColour()
 	{
 		return Color.GREEN;
-	}
-
-	@ConfigItem(
-			keyName = "overlayCompleteTiles",
-			name = "Show Complete",
-			description = "Highlight the complete tiles",
-			section = tilesSection,
-			position = 2
-	)
-	default boolean showOverlayCompleteTiles()
-	{
-		return false;
 	}
 
 	@Alpha
@@ -578,11 +588,37 @@ public interface GolemCraftingConfig extends Config
 			name = "Complete Colour",
 			description = "The highlight colour for complete tiles",
 			section = tilesSection,
-			position = 3
+			position = 4
 	)
 	default Color overlayTileCompleteColour()
 	{
 		return Color.RED;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "overlayTileOptimalColour",
+			name = "Optimal Colour",
+			description = "The highlight colour for the current optimal tile",
+			section = tilesSection,
+			position = 5
+	)
+	default Color overlayTileOptimalColour()
+	{
+		return Color.GREEN;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "overlayTileNextOptimalColour",
+			name = "Next Optimal Colour",
+			description = "The highlight colour for the next optimal tile",
+			section = tilesSection,
+			position = 6
+	)
+	default Color overlayTileNextOptimalColour()
+	{
+		return Color.BLUE;
 	}
 
 	@ConfigItem(
@@ -590,7 +626,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Show Golem on Insert Core",
 			description = "Highlight the golem tile when on the Insert Core stage",
 			section = tilesSection,
-			position = 4
+			position = 7
 	)
 	default boolean showOverlayGolemOnInsertCore()
 	{
@@ -603,7 +639,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Insert Core Colour",
 			description = "The highlight colour for the golem tile when on the Insert Core stage",
 			section = tilesSection,
-			position = 5
+			position = 8
 	)
 	default Color overlayTileGolemOnInsertColour()
 	{
