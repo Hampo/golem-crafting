@@ -165,22 +165,32 @@ Removes the Insert-core option when you're on the wrong side.
 ## Tiles
 Configure tile markers.
 
-### Show Incomplete
-Highlight tiles on sides of the golem you've not shaped yet.
+### Mode
+Which tiles to highlight.
+
+* **None**: Do not highlight tiles.
+* **All**: Highlight both complete and incomplete tiles.
+* **All w/ Optimal**: Highlight both complete and incomplete tiles, with current and next optimal tiles marked differently.
+* **Incomplete**: Highlight incomplete tiles.
+* **Incomplete w/ Optimal**: Highlight incomplete tiles, with current and next optimal tiles marked differently.
+* **Optimal**: Highlight only the current and next optimal tile.
 
 ### Incomplete Colour
 The colour to highlight tiles on sides of the golem you've not shaped yet in.
 
-### Show Complete
-Highlight tiles on sides of the golem you've already shaped.
-
-### Incomplete Colour
+### Complete Colour
 The colour to highlight tiles on sides you've already shaped in.
+
+### Optimal Colour
+The colour to highlight the current optimal tile.
+
+### Next Optimal Colour
+The colour to highlight the next optimal tile.
 
 ### Show Golem on Insert Core
 Highlight the golem tile when on the Insert Core stage.
 
-### Incomplete Colour
+### Insert Core Colour
 The highlight colour for the golem tile when on the Insert Core stage.
 
 ## Progress
