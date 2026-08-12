@@ -535,7 +535,7 @@ public interface GolemCraftingConfig extends Config
 
 	@ConfigItem(
 			keyName = "overlayTiles",
-			name = "Highlight Incomplete",
+			name = "Show Incomplete",
 			description = "Highlight the incomplete tiles",
 			section = tilesSection,
 			position = 0
@@ -560,7 +560,7 @@ public interface GolemCraftingConfig extends Config
 
 	@ConfigItem(
 			keyName = "overlayCompleteTiles",
-			name = "Highlight Complete",
+			name = "Show Complete",
 			description = "Highlight the complete tiles",
 			section = tilesSection,
 			position = 2
@@ -581,6 +581,31 @@ public interface GolemCraftingConfig extends Config
 	default Color overlayTileCompleteColour()
 	{
 		return Color.RED;
+	}
+
+	@ConfigItem(
+			keyName = "showOverlayGolemOnInsertCore",
+			name = "Show Golem on Insert Core",
+			description = "Highlight the golem tile when on the Insert Core stage",
+			section = tilesSection,
+			position = 4
+	)
+	default boolean showOverlayGolemOnInsertCore()
+	{
+		return false;
+	}
+
+	@Alpha
+	@ConfigItem(
+			keyName = "overlayTileGolemOnInsertColour",
+			name = "Complete Colour",
+			description = "The highlight colour for the golem tile when on the Insert Core stage",
+			section = tilesSection,
+			position = 5
+	)
+	default Color overlayTileGolemOnInsertColour()
+	{
+		return Color.GREEN;
 	}
 
 	@ConfigSection(

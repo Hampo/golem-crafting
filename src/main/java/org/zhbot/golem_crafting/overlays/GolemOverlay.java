@@ -172,9 +172,15 @@ public class GolemOverlay extends Overlay {
             graphicsUtils.renderObject(graphics, station, config.overlayPlinthRenderStyle(), color);
         }
 
-        if (isFinalStep && config.showOverlayPlinthCore())
-            graphicsUtils.renderItem(graphics, station, ItemID.SUNSTONE_CORE, config.overlayZOffset());
-        else if (!isFinalStep && currentSide != CardinalDirection.NONE && config.showProgressMode().isShowPlinth())
+        if (isFinalStep)
+        {
+            if (config.showOverlayPlinthCore())
+                graphicsUtils.renderItem(graphics, station, ItemID.SUNSTONE_CORE, config.overlayZOffset());
+
+            if (config.showOverlayGolemOnInsertCore())
+                graphicsUtils.renderTile(graphics, golem.getGolemTile(), config.overlayTileGolemOnInsertColour());
+        }
+        else if (currentSide != CardinalDirection.NONE && config.showProgressMode().isShowPlinth())
         {
             var currentProgress = 0d;
             switch (currentSide)
