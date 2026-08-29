@@ -101,6 +101,8 @@ public class GolemCraftingPlugin extends Plugin
 	@Getter
 	private int lastBusyTick;
 
+	private boolean inGolemArea;
+
 	@Override
 	protected void startUp() throws Exception
 	{
@@ -236,6 +238,26 @@ public class GolemCraftingPlugin extends Plugin
 		sunstoneCoreCount = inventory.count(ItemID.SUNSTONE_CORE);
 	}
 
+	@Subscribe
+	public void onGameTick(GameTick event)
+	{
+		var player = client.getLocalPlayer();
+		if (player == null)
+		{
+			inGolemArea = false;
+			return;
+		}
+
+		if (config.debug())
+		{
+			inGolemArea = true;
+			return;
+		}
+
+		var playerLocation = player.getWorldLocation();
+		inGolemArea = playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
+	}
+
 	@Provides
 	GolemCraftingConfig provideConfig(ConfigManager configManager)
 	{
@@ -282,15 +304,7 @@ public class GolemCraftingPlugin extends Plugin
 
 	public boolean outsideGolemArea()
 	{
-		var player = client.getLocalPlayer();
-		if (player == null)
-			return true;
-
-		if (config.debug())
-			return false;
-
-		var playerLocation = player.getWorldLocation();
-		return playerLocation.distanceTo(CENTER) > MAX_DISTANCE;
+		return !inGolemArea;
 	}
 
 	public boolean isCrafting()
