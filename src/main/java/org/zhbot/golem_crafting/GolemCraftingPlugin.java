@@ -20,7 +20,6 @@ import net.runelite.client.events.ConfigChanged;
 import net.runelite.client.plugins.Plugin;
 import net.runelite.client.plugins.PluginDescriptor;
 import net.runelite.client.ui.overlay.OverlayManager;
-import net.runelite.client.util.Text;
 import org.zhbot.golem_crafting.enums.SunstoneMode;
 import org.zhbot.golem_crafting.golems.Golem;
 import org.zhbot.golem_crafting.golems.NorthGolem;
@@ -28,6 +27,7 @@ import org.zhbot.golem_crafting.golems.SouthGolem;
 import org.zhbot.golem_crafting.overlays.*;
 import org.zhbot.golem_crafting.utils.FurPouch;
 import org.zhbot.golem_crafting.utils.GraphicsUtils;
+import org.zhbot.golem_crafting.utils.Text;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -185,26 +185,18 @@ public class GolemCraftingPlugin extends Plugin
 		if (event.getType() != ChatMessageType.GAMEMESSAGE)
 			return;
 
-		var message = Text.removeTags(event.getMessage());
-
-		var hideMessage = false;
+		var message = Text.Clean(event.getMessage());
 
 		var lootMatcher = LOOT_MESSAGE.matcher(message);
-		if (lootMatcher.matches())
-		{
-			var loot = lootMatcher.group(3).toLowerCase(Locale.ROOT);
 
-			hideMessage = config.gameChatHideLoot() && (!config.gameChatHideLootExcludeChisel() || !loot.equalsIgnoreCase("Jeweller's Chisel"));
-		}
-
-		hideMessage = hideMessage ||
+		var hideMessage = (lootMatcher.matches() && (config.gameChatHideLoot() && (!config.gameChatHideLootExcludeChisel() || !lootMatcher.group(3).equalsIgnoreCase("Jeweller's Chisel")))) ||
 						(config.gameChatHideAngle() && message.contains(FINISH_ANGLE_MESSAGE)) ||
 						(config.gameChatHideRepeatedAngle() && message.contains(REPEATED_ANGLE_MESSAGE)) ||
 						(config.gameChatHideTotal() && TOTAL_GOLEMS_MESSAGE.matcher(message).matches());
 
 		if (hideMessage)
 		{
-			final ChatLineBuffer lineBuffer = client.getChatLineMap().get(ChatMessageType.GAMEMESSAGE.getType());
+			final var lineBuffer = client.getChatLineMap().get(ChatMessageType.GAMEMESSAGE.getType());
 			if (lineBuffer == null)
 				return;
 

@@ -12,7 +12,6 @@ import net.runelite.api.widgets.Widget;
 import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.Subscribe;
-import net.runelite.client.util.Text;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
 import org.zhbot.golem_crafting.GolemCraftingPlugin;
 import org.zhbot.golem_crafting.enums.FurPouchType;
@@ -178,7 +177,7 @@ public class FurPouch {
         if (!hasFurPouch())
             return;
 
-        var message = Text.removeTags(event.getMessage());
+        var message = Text.Clean(event.getMessage());
 
         var matcher = FUR_POUCH_PATTERN.matcher(message);
         if (matcher.find())

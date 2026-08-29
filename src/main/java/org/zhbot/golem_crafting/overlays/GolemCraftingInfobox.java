@@ -9,9 +9,9 @@ import net.runelite.client.ui.overlay.OverlayPanel;
 import net.runelite.client.ui.overlay.OverlayPosition;
 import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
-import net.runelite.client.util.Text;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
 import org.zhbot.golem_crafting.GolemCraftingPlugin;
+import org.zhbot.golem_crafting.utils.Text;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -161,7 +161,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
         if (event.getType() != ChatMessageType.GAMEMESSAGE)
             return;
 
-        var message = Text.removeTags(event.getMessage());
+        var message = Text.Clean(event.getMessage());
 
         var lootMatcher = GolemCraftingPlugin.LOOT_MESSAGE.matcher(message);
         if (!lootMatcher.matches())

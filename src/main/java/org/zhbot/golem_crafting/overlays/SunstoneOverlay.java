@@ -10,11 +10,11 @@ import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.overlay.Overlay;
 import net.runelite.client.ui.overlay.OverlayLayer;
 import net.runelite.client.ui.overlay.OverlayPosition;
-import net.runelite.client.util.Text;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
 import org.zhbot.golem_crafting.GolemCraftingPlugin;
 import org.zhbot.golem_crafting.enums.SunstoneMode;
 import org.zhbot.golem_crafting.utils.GraphicsUtils;
+import org.zhbot.golem_crafting.utils.Text;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -102,7 +102,7 @@ public class SunstoneOverlay extends Overlay {
         if (event.getType() != ChatMessageType.SPAM)
             return;
 
-        var message = Text.removeTags(event.getMessage());
+        var message = Text.Clean(event.getMessage());
 
         if (message.contains(MINING_MONOLITH_MESSAGE)) {
             miningSunstoneRock = false;
