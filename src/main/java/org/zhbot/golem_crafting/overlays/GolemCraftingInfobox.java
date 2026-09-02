@@ -11,7 +11,7 @@ import net.runelite.client.ui.overlay.components.LineComponent;
 import net.runelite.client.ui.overlay.components.TitleComponent;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
 import org.zhbot.golem_crafting.GolemCraftingPlugin;
-import org.zhbot.golem_crafting.utils.Text;
+import org.zhbot.golem_crafting.utils.TextUtils;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -21,6 +21,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
     private final Client client;
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
+    private final TextUtils textUtils;
 
     private int sapphireCount = 0;
     private int emeraldCount = 0;
@@ -29,11 +30,12 @@ public class GolemCraftingInfobox extends OverlayPanel {
     private int jewellersChiselCount = 0;
 
     @Inject
-    private GolemCraftingInfobox(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config)
+    private GolemCraftingInfobox(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config, TextUtils textUtils)
     {
         this.client = client;
         this.plugin = plugin;
         this.config = config;
+        this.textUtils = textUtils;
 
         setPosition(OverlayPosition.TOP_LEFT);
     }
@@ -161,7 +163,7 @@ public class GolemCraftingInfobox extends OverlayPanel {
         if (event.getType() != ChatMessageType.GAMEMESSAGE)
             return;
 
-        var message = Text.Clean(event.getMessage());
+        var message = textUtils.Clean(event.getMessage());
 
         var lootMatcher = GolemCraftingPlugin.LOOT_MESSAGE.matcher(message);
         if (!lootMatcher.matches())

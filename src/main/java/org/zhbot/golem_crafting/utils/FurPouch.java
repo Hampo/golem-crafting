@@ -82,6 +82,7 @@ public class FurPouch {
     private final Client client;
     private final ConfigManager configManager;
     private final GolemCraftingPlugin plugin;
+    private final TextUtils textUtils;
 
     @Getter
     private boolean hasOpenFurPouch = false;
@@ -93,11 +94,12 @@ public class FurPouch {
     private int invSpaceCount = 0;
 
     @Inject
-    private FurPouch(Client client, ClientThread clientThread, ConfigManager configManager, GolemCraftingPlugin plugin)
+    private FurPouch(Client client, ClientThread clientThread, ConfigManager configManager, GolemCraftingPlugin plugin, TextUtils textUtils)
     {
         this.client = client;
         this.configManager = configManager;
         this.plugin = plugin;
+        this.textUtils = textUtils;
 
         if (client.getGameState() == GameState.LOGGED_IN)
         {
@@ -177,7 +179,7 @@ public class FurPouch {
         if (!hasFurPouch())
             return;
 
-        var message = Text.Clean(event.getMessage());
+        var message = textUtils.Clean(event.getMessage());
 
         var matcher = FUR_POUCH_PATTERN.matcher(message);
         if (matcher.find())

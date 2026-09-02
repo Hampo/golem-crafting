@@ -27,7 +27,7 @@ import org.zhbot.golem_crafting.golems.SouthGolem;
 import org.zhbot.golem_crafting.overlays.*;
 import org.zhbot.golem_crafting.utils.FurPouch;
 import org.zhbot.golem_crafting.utils.GraphicsUtils;
-import org.zhbot.golem_crafting.utils.Text;
+import org.zhbot.golem_crafting.utils.TextUtils;
 
 import java.util.*;
 import java.util.regex.Pattern;
@@ -57,6 +57,9 @@ public class GolemCraftingPlugin extends Plugin
 
 	@Inject
 	private GraphicsUtils graphicsUtils;
+
+	@Inject
+	private TextUtils textUtils;
 
 	@Inject
 	private Notifier notifier;
@@ -187,7 +190,7 @@ public class GolemCraftingPlugin extends Plugin
 		if (event.getType() != ChatMessageType.GAMEMESSAGE)
 			return;
 
-		var message = Text.Clean(event.getMessage());
+		var message = textUtils.Clean(event.getMessage());
 
 		var lootMatcher = LOOT_MESSAGE.matcher(message);
 

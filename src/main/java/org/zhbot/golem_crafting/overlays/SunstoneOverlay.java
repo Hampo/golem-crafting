@@ -14,7 +14,7 @@ import org.zhbot.golem_crafting.GolemCraftingConfig;
 import org.zhbot.golem_crafting.GolemCraftingPlugin;
 import org.zhbot.golem_crafting.enums.SunstoneMode;
 import org.zhbot.golem_crafting.utils.GraphicsUtils;
-import org.zhbot.golem_crafting.utils.Text;
+import org.zhbot.golem_crafting.utils.TextUtils;
 
 import javax.inject.Inject;
 import java.awt.*;
@@ -37,14 +37,16 @@ public class SunstoneOverlay extends Overlay {
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
     private final GraphicsUtils graphicsUtils;
+    private final TextUtils textUtils;
 
     @Inject
-    public SunstoneOverlay(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config, GraphicsUtils graphicsUtils)
+    public SunstoneOverlay(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config, GraphicsUtils graphicsUtils, TextUtils textUtils)
     {
         this.client = client;
         this.plugin = plugin;
         this.config = config;
         this.graphicsUtils = graphicsUtils;
+        this.textUtils = textUtils;
 
         setPosition(OverlayPosition.DYNAMIC);
         setLayer(OverlayLayer.ABOVE_SCENE);
@@ -102,7 +104,7 @@ public class SunstoneOverlay extends Overlay {
         if (event.getType() != ChatMessageType.SPAM)
             return;
 
-        var message = Text.Clean(event.getMessage());
+        var message = textUtils.Clean(event.getMessage());
 
         if (message.contains(MINING_MONOLITH_MESSAGE)) {
             miningSunstoneRock = false;
