@@ -34,7 +34,9 @@ import java.util.regex.Pattern;
 
 @Slf4j
 @PluginDescriptor(
-	name = "Golem Crafting"
+	name = "Golem Crafting",
+	description = "A plugin to help with Wyrmscraig Golem Crafting.",
+	tags = {"wyrmscraig", "sunstone", "golem", "crafting"}
 )
 public class GolemCraftingPlugin extends Plugin
 {
