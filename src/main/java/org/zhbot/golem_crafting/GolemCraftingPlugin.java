@@ -6,6 +6,7 @@ import javax.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import net.runelite.api.*;
+import net.runelite.api.coords.WorldArea;
 import net.runelite.api.coords.WorldPoint;
 import net.runelite.api.events.*;
 import net.runelite.api.gameval.AnimationID;
@@ -40,8 +41,7 @@ import java.util.regex.Pattern;
 )
 public class GolemCraftingPlugin extends Plugin
 {
-	private static final WorldPoint CENTER = new WorldPoint(2590, 2250, 0);
-	private static final int MAX_DISTANCE = 15;
+	private static final WorldArea GOLEM_AREA = new WorldArea(2580, 2236, 38, 26, 0);
 
 	private static final String FINISH_ANGLE_MESSAGE = "You finish crafting the golem from this angle.";
 	private static final String REPEATED_ANGLE_MESSAGE = "You've already crafted this side of the golem.";
@@ -259,8 +259,7 @@ public class GolemCraftingPlugin extends Plugin
 			return;
 		}
 
-		var playerLocation = player.getWorldLocation();
-		inGolemArea = playerLocation.distanceTo(CENTER) <= MAX_DISTANCE;
+		inGolemArea = GOLEM_AREA.contains(player.getWorldLocation());
 	}
 
 	@Provides
