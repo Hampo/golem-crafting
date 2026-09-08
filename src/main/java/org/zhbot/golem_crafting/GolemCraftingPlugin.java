@@ -14,6 +14,7 @@ import net.runelite.api.gameval.InventoryID;
 import net.runelite.api.gameval.ItemID;
 import net.runelite.api.gameval.VarbitID;
 import net.runelite.client.Notifier;
+import net.runelite.client.callback.ClientThread;
 import net.runelite.client.config.ConfigManager;
 import net.runelite.client.eventbus.EventBus;
 import net.runelite.client.eventbus.Subscribe;
@@ -50,6 +51,9 @@ public class GolemCraftingPlugin extends Plugin
 
 	@Inject
 	private Client client;
+
+	@Inject
+	private ClientThread clientThread;
 
 	@Inject
 	private EventBus eventBus;
@@ -127,17 +131,30 @@ public class GolemCraftingPlugin extends Plugin
 			golemOverlays.add(overlay);
 		}
 
+		clientThread.invoke(() ->
+		{
+			sunstoneOverlay.startup();
+
+			for (var golem : golems)
+				golem.startup();
+		});
+
 		updateConfig();
 	}
 
 	@Override
 	protected void shutDown() throws Exception
 	{
+		sunstoneOverlay.shutdown();
+
 		eventBus.unregister(furPouch);
 		eventBus.unregister(infobox);
 		eventBus.unregister(sunstoneOverlay);
 		for (var golem : golems)
+		{
+			golem.shutdown();
 			eventBus.unregister(golem);
+		}
 
 		for (var golemOverlay : golemOverlays)
 			overlayManager.remove(golemOverlay);

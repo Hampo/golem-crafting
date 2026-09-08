@@ -7,10 +7,7 @@ import net.runelite.api.GameState;
 import net.runelite.api.MenuAction;
 import net.runelite.api.coords.LocalPoint;
 import net.runelite.api.coords.WorldPoint;
-import net.runelite.api.events.GameStateChanged;
-import net.runelite.api.events.MenuEntryAdded;
-import net.runelite.api.events.MenuOptionClicked;
-import net.runelite.api.events.VarbitChanged;
+import net.runelite.api.events.*;
 import net.runelite.client.Notifier;
 import net.runelite.client.eventbus.Subscribe;
 import org.zhbot.golem_crafting.GolemCraftingConfig;
@@ -65,6 +62,9 @@ public abstract class Golem {
 
     private final CardinalDirection finalTile;
 
+    @Getter
+    private GameObject stationGameObject;
+
     public Golem(Client client, Notifier notifier, GolemCraftingPlugin plugin, GolemCraftingConfig config, String name, int stationID, int progressID, int northStateID, int eastStateID, int southStateID, int westStateID, int northProgressID, int eastProgressID, int southProgressID, int westProgressID, WorldPoint golemTile, CardinalDirection finalTile)
     {
         this.client = client;
@@ -92,6 +92,55 @@ public abstract class Golem {
     }
 
     public abstract StartDirection getStartDirection();
+
+    public void startup()
+    {
+        var localTile = LocalPoint.fromWorld(client, golemTile);
+        if (localTile == null)
+            return;
+
+        var worldView = client.getWorldView(localTile.getWorldView());
+        if (worldView == null)
+            return;
+
+        var scene = worldView.getScene();
+        if (scene == null)
+            return;
+
+        var tile = scene.getTiles()[golemTile.getPlane()][localTile.getSceneX()][localTile.getSceneY()];
+        if (tile == null)
+            return;
+
+        for (var gameObject : tile.getGameObjects())
+        {
+            if (gameObject != null && gameObject.getId() == stationID)
+            {
+                stationGameObject = gameObject;
+                return;
+            }
+        }
+    }
+
+    public void shutdown()
+    {
+        stationGameObject = null;
+    }
+
+    @Subscribe
+    public void onGameObjectSpawned(GameObjectSpawned event)
+    {
+        var object = event.getGameObject();
+        if (object.getId() == stationID && object.getWorldLocation().distanceTo(golemTile) == 0)
+            stationGameObject = object;
+    }
+
+    @Subscribe
+    public void onGameObjectDespawned(GameObjectDespawned event)
+    {
+        var object = event.getGameObject();
+        if (object.getId() == stationID && object.getWorldLocation().distanceTo(golemTile) == 0)
+            stationGameObject = null;
+    }
 
     @Subscribe
     public void onVarbitChanged(VarbitChanged event)
@@ -126,11 +175,17 @@ public abstract class Golem {
 
     @Subscribe
     public void onGameStateChanged(GameStateChanged event) {
-        if (event.getGameState() != GameState.LOGGED_IN)
-            return;
+        switch (event.getGameState())
+        {
+            case LOADING:
+                stationGameObject = null;
+                break;
+            case LOGGED_IN:
+                firstProgressTick = true;
+                lastProgressTick = -RESPAWN_DELAY;
 
-        firstProgressTick = true;
-        lastProgressTick = -RESPAWN_DELAY;
+                break;
+        }
     }
 
     @Subscribe
@@ -357,31 +412,6 @@ public abstract class Golem {
     public CardinalDirection getNextOptimalSide()
     {
         return findOptimalSide(1);
-    }
-
-    public GameObject getStationGameObject()
-    {
-        var localTile = LocalPoint.fromWorld(client, golemTile);
-        if (localTile == null)
-            return null;
-
-        var worldView = client.getWorldView(localTile.getWorldView());
-        if (worldView == null)
-            return null;
-
-        var scene = worldView.getScene();
-        if (scene == null)
-            return null;
-
-        var tile = scene.getTiles()[golemTile.getPlane()][localTile.getSceneX()][localTile.getSceneY()];
-        if (tile == null)
-            return null;
-
-        for (var gameObject : tile.getGameObjects())
-            if (gameObject != null && gameObject.getId() == stationID)
-                return gameObject;
-
-        return null;
     }
 }
 

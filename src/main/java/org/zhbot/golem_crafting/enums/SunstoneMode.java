@@ -3,7 +3,8 @@ package org.zhbot.golem_crafting.enums;
 public enum SunstoneMode {
     NONE("None"),
     MONOLITH("Monolith"),
-    ROCKS("Rocks");
+    ROCKS("Upper Rocks"),
+    ROCKS_LOWER("Lower Rocks");
 
     private final String name;
 

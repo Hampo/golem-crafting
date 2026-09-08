@@ -2,8 +2,11 @@ package org.zhbot.golem_crafting.overlays;
 
 import net.runelite.api.ChatMessageType;
 import net.runelite.api.Client;
+import net.runelite.api.GameObject;
 import net.runelite.api.GameState;
 import net.runelite.api.events.ChatMessage;
+import net.runelite.api.events.GameObjectDespawned;
+import net.runelite.api.events.GameObjectSpawned;
 import net.runelite.api.events.GameStateChanged;
 import net.runelite.api.gameval.ObjectID;
 import net.runelite.client.eventbus.Subscribe;
@@ -18,26 +21,27 @@ import org.zhbot.golem_crafting.utils.TextUtils;
 
 import javax.inject.Inject;
 import java.awt.*;
-import java.util.Set;
+import java.util.List;
+import java.util.ArrayList;
 
 public class SunstoneOverlay extends Overlay {
-    private static final Set<Integer> SUNSTONE_ROCK_IDS = Set.of(
-            ObjectID.SUNSTONEROCK1,
-            ObjectID.SUNSTONEROCK2
-    );
-
     private static final String MINING_ROCK_MESSAGE = "You swing your pick at the rock.";
     private static final String MINING_MONOLITH_MESSAGE = "You swing your pick at the monolith.";
     private static final String MINED_SUNSTONE_MESSAGE = "You manage to mine some sunstone.";
     private static final int MOMENTUM_TICKS = 5;
-    private boolean miningSunstoneRock = false;
-    private int lastSunstoneMinedTick = -MOMENTUM_TICKS;
 
     private final Client client;
     private final GolemCraftingPlugin plugin;
     private final GolemCraftingConfig config;
     private final GraphicsUtils graphicsUtils;
     private final TextUtils textUtils;
+
+    private boolean miningSunstoneRock = false;
+    private int lastSunstoneMinedTick = -MOMENTUM_TICKS;
+
+    private GameObject monolith;
+    private final List<GameObject> upperRocks = new ArrayList<>();
+    private final List<GameObject> lowerRocks = new ArrayList<>();
 
     @Inject
     public SunstoneOverlay(Client client, GolemCraftingPlugin plugin, GolemCraftingConfig config, GraphicsUtils graphicsUtils, TextUtils textUtils)
@@ -52,25 +56,23 @@ public class SunstoneOverlay extends Overlay {
         setLayer(OverlayLayer.ABOVE_SCENE);
     }
 
-    @Override
-    public Dimension render(Graphics2D graphics) {
-        var sunstoneMode = config.overlaySunstoneMode();
-        if (sunstoneMode == SunstoneMode.NONE)
-            return null;
-
-        if (plugin.outsideGolemArea())
-            return null;
-
-        if (plugin.hasGolemMaterials())
-            return null;
-
+    public void startup()
+    {
         var worldView = client.getTopLevelWorldView();
+        if (worldView == null)
+            return;
+
         var scene = worldView.getScene();
-        var tiles = scene.getTiles()[worldView.getPlane()];
+        if (scene == null)
+            return;
 
-        var hasMomentum = config.overlaySunstoneMomentum() && hasMomentum();
+        var tiles = scene.getTiles();
+        if (tiles == null || tiles.length == 0)
+            return;
 
-        for (var xTiles : tiles) {
+        var zTiles = tiles[worldView.getPlane()];
+
+        for (var xTiles : zTiles) {
             for (var tile : xTiles) {
                 if (tile == null)
                     continue;
@@ -84,16 +86,60 @@ public class SunstoneOverlay extends Overlay {
                     if (gameObject == null)
                         continue;
 
-                    if (sunstoneMode == SunstoneMode.MONOLITH && gameObject.getId() == ObjectID.WYRMSCRAIG_SUNSTONE01)
+                    switch (gameObject.getId())
                     {
-                        graphicsUtils.renderObject(graphics, gameObject, config.overlaySunstoneRenderStyle(), config.overlaySunstoneColour());
-                        return null;
+                        case ObjectID.WYRMSCRAIG_SUNSTONE01:
+                            monolith = gameObject;
+                            break;
+                        case ObjectID.SUNSTONEROCK1:
+                        case ObjectID.SUNSTONEROCK2:
+                            upperRocks.add(gameObject);
+                            break;
                     }
-
-                    if (sunstoneMode == SunstoneMode.ROCKS && SUNSTONE_ROCK_IDS.contains(gameObject.getId()))
-                        graphicsUtils.renderObject(graphics, gameObject, config.overlaySunstoneRenderStyle(), hasMomentum ? config.overlaySunstoneMomentumColour() : config.overlaySunstoneColour());
                 }
             }
+        }
+    }
+
+    public void shutdown()
+    {
+        monolith = null;
+        upperRocks.clear();
+        lowerRocks.clear();
+    }
+
+    @Override
+    public Dimension render(Graphics2D graphics) {
+        var sunstoneMode = config.overlaySunstoneMode();
+        if (sunstoneMode == SunstoneMode.NONE)
+            return null;
+
+        if (plugin.outsideGolemArea())
+            return null;
+
+        if (plugin.hasGolemMaterials())
+            return null;
+
+        var hasMomentum = config.overlaySunstoneMomentum() && hasMomentum();
+
+        switch (sunstoneMode)
+        {
+            case MONOLITH:
+                if (monolith == null)
+                    break;
+
+                graphicsUtils.renderObject(graphics, monolith, config.overlaySunstoneRenderStyle(), config.overlaySunstoneColour());
+                break;
+            case ROCKS:
+                for (var rock : upperRocks)
+                    graphicsUtils.renderObject(graphics, rock, config.overlaySunstoneRenderStyle(), hasMomentum ? config.overlaySunstoneMomentumColour() : config.overlaySunstoneColour());
+
+                break;
+            case ROCKS_LOWER:
+                for (var rock : lowerRocks)
+                    graphicsUtils.renderObject(graphics, rock, config.overlaySunstoneRenderStyle(), hasMomentum ? config.overlaySunstoneMomentumColour() : config.overlaySunstoneColour());
+
+                break;
         }
 
         return null;
@@ -124,10 +170,62 @@ public class SunstoneOverlay extends Overlay {
 
     @Subscribe
     public void onGameStateChanged(GameStateChanged event) {
-        if (event.getGameState() != GameState.LOGGED_IN)
-            return;
+        switch (event.getGameState())
+        {
+            case LOADING:
+                monolith = null;
+                upperRocks.clear();
+                lowerRocks.clear();
 
-        lastSunstoneMinedTick = -MOMENTUM_TICKS;
+                break;
+            case LOGGED_IN:
+                lastSunstoneMinedTick = -MOMENTUM_TICKS;
+
+                break;
+        }
+    }
+
+    @Subscribe
+    public void onGameObjectSpawned(GameObjectSpawned event)
+    {
+        var object = event.getGameObject();
+
+        switch (object.getId())
+        {
+            case ObjectID.WYRMSCRAIG_SUNSTONE01:
+                monolith = object;
+
+                break;
+            case ObjectID.SUNSTONEROCK1:
+            case ObjectID.SUNSTONEROCK2:
+                if (object.getWorldLocation().getX() < 2605)
+                    upperRocks.add(object);
+                else
+                    lowerRocks.add(object);
+
+                break;
+        }
+    }
+
+    @Subscribe
+    public void onGameObjectDespawned(GameObjectDespawned event)
+    {
+        var object = event.getGameObject();
+
+        switch (object.getId())
+        {
+            case ObjectID.WYRMSCRAIG_SUNSTONE01:
+                if (object == monolith)
+                    monolith = null;
+
+                break;
+            case ObjectID.SUNSTONEROCK1:
+            case ObjectID.SUNSTONEROCK2:
+                upperRocks.remove(object);
+                lowerRocks.remove(object);
+
+                break;
+        }
     }
 
     private boolean hasMomentum()
