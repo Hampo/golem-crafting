@@ -228,6 +228,9 @@ How to render the highlight.
 ### Show Momentum
 Colour sunstone rocks a different colour when momentum is active.
 
+### Deprioritise Other
+Deprioritise the mine action on other sunstones.
+
 ### Sunstone Colour
 The colour to highlight the sunstone monolith/rocks in.
 
