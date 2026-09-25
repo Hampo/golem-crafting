@@ -1,13 +1,8 @@
 package org.zhbot.golem_crafting.overlays;
 
-import net.runelite.api.ChatMessageType;
-import net.runelite.api.Client;
-import net.runelite.api.GameObject;
-import net.runelite.api.GameState;
-import net.runelite.api.events.ChatMessage;
-import net.runelite.api.events.GameObjectDespawned;
-import net.runelite.api.events.GameObjectSpawned;
-import net.runelite.api.events.GameStateChanged;
+import net.runelite.api.*;
+import net.runelite.api.coords.WorldPoint;
+import net.runelite.api.events.*;
 import net.runelite.api.gameval.ObjectID;
 import net.runelite.client.eventbus.Subscribe;
 import net.runelite.client.ui.overlay.Overlay;
@@ -226,6 +221,61 @@ public class SunstoneOverlay extends Overlay {
 
                 break;
         }
+    }
+
+    @Subscribe
+    public void onMenuEntryAdded(MenuEntryAdded event)
+    {
+        if (!config.sunstoneDeprioritiseOther())
+            return;
+
+        var sunstoneMode = config.overlaySunstoneMode();
+        if (sunstoneMode == SunstoneMode.NONE)
+            return;
+
+        if (plugin.outsideGolemArea())
+            return;
+
+        var entry = event.getMenuEntry();
+        if (entry.getType() != MenuAction.GAME_OBJECT_FIRST_OPTION)
+            return;
+
+        var option = textUtils.Clean(event.getOption());
+        if (!option.equals("Mine"))
+            return;
+
+        var target = textUtils.Clean(event.getTarget());
+        switch (target)
+        {
+            case "Sunstone monolith":
+                if (sunstoneMode == SunstoneMode.MONOLITH)
+                    return;
+
+                break;
+            case "Sunstone rocks":
+                var sceneX = entry.getParam0();
+                var sceneY = entry.getParam1();
+
+                var worldView = client.getTopLevelWorldView();
+                var worldPoint = WorldPoint.fromScene(worldView.getScene(), sceneX, sceneY, worldView.getPlane());
+
+                if (worldPoint.getX() < 2605)
+                {
+                    if (sunstoneMode == SunstoneMode.ROCKS)
+                        return;
+                }
+                else
+                {
+                    if (sunstoneMode == SunstoneMode.ROCKS_LOWER)
+                        return;
+                }
+
+                break;
+            default:
+                return;
+        }
+
+        event.getMenuEntry().setDeprioritized(true);
     }
 
     private boolean hasMomentum()

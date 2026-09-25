@@ -720,13 +720,25 @@ public interface GolemCraftingConfig extends Config
 		return true;
 	}
 
+	@ConfigItem(
+			keyName = "sunstoneDeprioritiseOther",
+			name = "Deprioritise Other",
+			description = "Deprioritise the mine action on other sunstones",
+			section = sunstoneSection,
+			position = 3
+	)
+	default boolean sunstoneDeprioritiseOther()
+	{
+		return true;
+	}
+
 	@Alpha
 	@ConfigItem(
 			keyName = "overlaySunstoneColour",
 			name = "Sunstone Colour",
 			description = "The highlight colour for sunstones",
 			section = sunstoneSection,
-			position = 3
+			position = 4
 	)
 	default Color overlaySunstoneColour()
 	{
@@ -739,7 +751,7 @@ public interface GolemCraftingConfig extends Config
 			name = "Momentum Colour",
 			description = "The colour for sunstone momentum",
 			section = sunstoneSection,
-			position = 4
+			position = 5
 	)
 	default Color overlaySunstoneMomentumColour()
 	{
